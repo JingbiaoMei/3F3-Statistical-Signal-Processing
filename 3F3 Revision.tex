@@ -493,12 +493,142 @@ Similarly to Fourier Transform, the characteristic function uniquely describes a
 &= \mathbb{E} \{ \exp (itX_1)\} \mathbb{E} \{ \exp (itX_2)\}...\mathbb{E} \{ \exp (itX_n)\}\\
 &= \varphi_{X_1}(t)...\varphi_{X_n}(t)
 \end{align*}
-The characteristic function of the \textcolor{blue1}{sum of independent random variables} is the \textcolor{blue1}{product} of their individual characteristic functions.
+\item The characteristic function of the \textcolor{blue1}{sum of independent random variables} is the \textcolor{blue1}{product} of their individual characteristic functions.
 
 \item Example: (Moments) Using $\varphi_{X}(t)$, compute $\mathbb{E}\{X^n\}$
-
+\[
+\frac{d^n}{dt^n}\varphi_{X}(t) = \mathbb{E} \left\{ \frac{d^n}{dt^n} \exp(itX)\right\} = \mathbb{E} \{ i^n X^n \exp(itX)\}
+\]
+Thus $i^n \mathbb{E}\{X^n\} = \frac{d^n}{dt^n} \varphi_{X}(t=0)$ (Putting t=0 for the above equation and make the exponential go to 1)
 
 \end{itemize}
+
+\item Equality of characteristic functions: Suppose that X and Y are random vectors with same characteristic functions: $\varphi_{X}(t) = \varphi_{Y}(t)$ for all $t \in \mathbb{R}^n$. Then X and Y have the same probability distribution
+
+\item Example using characteristic function:
+Let $X_1,X_2,...,X_n$ be independent Gaussian random variables where $X_i$ is $\mathcal{N}(0,1)$. Then $Y=m+SX$, where $m\in \mathbb{R}^d$ where $d<n$, is the multivariate Gaussian with mean m and covariance $SS^T$.
+
+Verify the result using characteristic function, that is let $t \in \mathbb{R}^d $ and compute $\mathbb{E}\{\exp{(it^TY)}\}$
+\begin{align*}
+\exp{(it^TY)} &= \exp(it^Tm)\exp(it^TSX) \\
+&=\exp(it^Tm)\exp(ir_1X_1)...\exp(ir_nX_n)\\
+\end{align*}
+Where vector $r=t^TS$
+\begin{align*}
+&\mathbb{E}\{\exp{(it^TY)}\} \\
+&= \exp(it^Tm)\mathbb{E}\{ \exp(ir_1X_1)...\exp(ir_nX_n)\}\\
+&= \exp(it^Tm) \exp(-\frac{1}{2}r_1^2)...\exp(-\frac{1}{2}r_n^2)\\
+&= \exp(it^Tm) \exp(-\frac{1}{2}t^TSS^Tt)\\
+\end{align*}
+\end{itemize}
+
+\section{Random process}
+\subsection{Definition of random process}
+\begin{itemize}
+\item Definition:A discrete random (or stochastic) process is one of the following infinite collection of random variables
+\[
+\{...,X_{-1},X_0,X_1,... \} \quad or \quad \{ X_0,X_1,...\} \quad or \quad \{ X_1,X_2,... \} 
+\]
+Notation: $\{ X_n\}_{n_i}^j = \{X_i,X_{i+1},...,X_j\}$
+\begin{itemize}
+\item Example: Random phase cosine. Let $X_n=\cos(2\pi fn + \phi)$ where $\phi$ is a Uniform random variable drawn from $[0,2\pi)$
+To generate 
+\[
+\{ X_n\}_{n=0}^\infty = \{X_0,X_{1},...\}
+\] 
+first sample $\phi$ and then set 
+\[
+X_n = \cos(2\pi fn + \phi)
+\]
+for $n=0,1,...$\\
+
+\item Example: infinite collection of independent random variables \\
+Let $0<q<1$ and $U_1,U_2,...$ be iid discrete random variables such that 
+\[
+Pr(U_n=1)=q, \qquad \qquad Pr(U_n=-1)=1-q
+\]
+\item Example: Random walk\\
+Generate the sequence $U_1,U_2,...$ as in the previous example and define a new random process $X_0,X_1...$ as follows: set $X_0=0$ and 
+\[
+X_n = X_{n-1}+U_n
+\]
+for $n > 0$\\
+We could equivalently write
+  \[
+    X_n=\left\{
+                \begin{array}{ll}
+                 X_{n-1} + 1   \qquad &w.p. q\\
+                 X_{n-1} - 1   \qquad &w.p. 1-q
+                \end{array}
+              \right.
+  \]
+and $X_0=0.$
+\end{itemize}
+\item Definition (Finite dimensional distributions)
+\begin{itemize}
+\item To completely specify a discrete time random process $X_0,X_1,...,$ we must specify their joint probability density function
+$$f_{X_0,X_1,...,X_n}(x_0,x_1,...,x_n)$$
+for all integers $n\ge 0$ when $X_0,X_1,...$ is a collection of continuous random variables 
+\item For discrete time random process $X_0,X_1,...,$ we must specify their joint probability mass function
+$$p_{X_0,X_1,...,X_n}(x_0,x_1,...,x_n)$$
+for all integers $n \ge 0$
+\item For any fixed n, you can treat $(X_0,X_1,...,X_n)$ as a random vector and just as in the case of random vectors, we use their joint pdf or joint pmf to describe how the random vector should be generated.
+\item For many interesting random processes, specifying $p_{X_0,X_1,...,X_n}(x_0,x_1,...,x_n$ is not too arduous. One such process which underpins many real world statistical models is a \textbf{Markov chain}.
+\end{itemize}
+
+\end{itemize} 
+\subsection{Markov Chain}
+\begin{itemize}
+\item Example \\
+A gambler has initial wealth r bets and keep playing until wealth is R or zero. Amount bet is b at every bet. The random process now is:
+\[
+X_{n+1} = \left\{ \begin{array}{ll}
+					X_n \quad & \textrm{if} X_n \in \{0,R \}=0 \\
+					X_n + b \quad & w.p. q \\
+					X_n - b \quad & w.p. 1-q
+\end{array} \right.
+\] 
+The generate $X_{n+1}$, only the value of $X_n$ is needed and not its past values. Any discrete time random process with this property is called a Markov process. \\
+It can be shown that the probability of wealth doubling when $q \le 0.5$is 
+\[
+\left[ 1 = \left(\frac{1-q}{q}\right)^{r/b}\right]^-1
+\]
+
+\begin{tabular}{ |c|c|c|c|} 
+\hline
+ & b=1pound & b=10pence  & b=1pence\\
+\hline
+\hline
+$q=0.5$ & 0.5 & 0.5 & 0.5 \\ 
+$q=0.49$ & 0.40 & 0.02 & $4.3 \times 10^{-18}$\\ 
+\hline
+\end{tabular}
+Table: Probability of doubling wealth with an initial fortune of 10 pounds.
+
+\item Definition of Markov chain Let $\{ X_n\}_{n \ge 0}$ be discrete random variables taking values in $S = \{1,...,L \}.$
+\begin{itemize}
+\item The transition probability matrix Q is a non-negative matrix 
+\end{itemize}
+
+\[
+\begin{bmatrix}
+Q_{1,1 } & Q_{1,2} & \cdots & Q_{1,L} \\
+Q_{1,1 } & Q_{1,2} & \cdots & Q_{1,L} \\
+\vdots & \vdots & \ddots & \vdots \\
+Q_{L,1 } & Q_{L,2} & \cdots & Q_{L,L} \\
+\end{bmatrix}
+\]
+and each row sums to one.
+\[
+Q_{1,L} = Pr(X_{n+1}=L | X_n = 1) \qquad \textrm{from state 1 jump to state L is the probability of L given  current state is L}
+\]
+\begin{itemize}
+\item The conditional pmf of $X_n$ given $X_0=i_0,...,X_{n-1}=i_{n-1}$
+\[Pr(X_n =i_n | X_0=i_0,...,X_{n-1}=i_{n-1}) = Q_{i_{n-1},i_n} = Pr(X_n =i_n | X_{n-1}=i_{n-1})
+\]
+\end{itemize}
+
+
 \end{itemize}
 
 \end{document}
