@@ -1,0 +1,3381 @@
+\documentclass[12pt]{article}
+
+% Custom Packages
+\usepackage{graphicx, subcaption, xcolor, multicol, float}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amssymb, amsmath, enumitem}
+
+% Custom Colors
+\definecolor{green}{rgb}{0.1,0.5,0.1}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{blue1}{rgb}{0.20,0.40,0.7}
+
+
+% Custom commands
+
+% text emph
+\newcommand{\empha}[1]{\textbf{\textcolor{blue1}{#1}}}
+\newcommand{\titc}[1]{\textit{\textcolor{blue1}{#1}}}
+
+
+
+% Integration
+\newcommand{\intinf}{\int_{-\infty}^{\infty}}
+\newcommand{\intpi}{\int_{0}^{2\pi}}
+\newcommand{\intpipi}{\int_{-\pi}^{\pi}}
+\newcommand{\inthalf}{\int_{-1/2}^{1/2}}
+\newcommand{\intzerohalf}{\int_{-1/2}^{1/2}}
+% Partial differentiations
+\newcommand{\dydx}[2]{\frac{\partial{#1}}{\partial{#2}}}
+
+\newcommand{\sigd}{\sigma^2}
+\newcommand{\var}{\textrm{var}}
+% Expected Values
+\newcommand{\mexp}{\mathbb{E}}
+\newcommand{\mexpval}[1]{\mathbb{E}(#1)}
+\newcommand{\mexpproc}[1]{\mathbb{E}\{ #1\}}
+
+% Summations
+\newcommand{\summ}[2]{\sum_{#1}^{#2}}
+\newcommand{\sumkzeroinf}{\summ{k=0}{\infty}}
+\newcommand{\sumkinfinf}{\summ{k=-\infty}{\infty}}
+\newcommand{\sumnzeroinf}{\summ{n=0}{\infty}}
+\newcommand{\sumninfinf}{\summ{n=-\infty}{\infty}}
+\newcommand{\summinfinf}{\summ{m=-\infty}{\infty}}
+\newcommand{\sumiinfinf}{\summ{i=-\infty}{\infty}}
+\newcommand{\sumpinfinf}{\summ{p=-\infty}{\infty}}
+\newcommand{\sumpzerop}{\summ{p=0}{P}}
+
+% Process notation
+\newcommand{\arproc}[1]{$\{#1_n \}_{n=-\infty}^{\infty}$}
+\newcommand{\arprock}[1]{$\{#1_k \}_{k=-\infty}^{\infty}$}
+\newcommand{\proc}[1]{\{ #1_n\}}
+% Power spectrum density
+\newcommand{\psd}{S_X(f)}
+\newcommand{\psdval}[1]{S_{#1}(f)}
+\newcommand{\ps}{S_X}
+% Correlation
+\newcommand{\corr}{R_X(k)}
+\newcommand{\correlation}[1]{R_X(#1)}
+%autocorrelation
+\newcommand{\autocox}{r_{xx}}
+\newcommand{\autocoy}{r_{yy}}
+%crosscorrelation
+\newcommand{\crosscoxy}{r_{xy}}
+% Fourier
+\newcommand{\focoef}[1]{e^{-j2\pi f #1}}
+\newcommand{\focoefinv}[1]{e^{j2\pi f #1}}
+
+
+%ARMA
+\newcommand{\arma}{ARMA($p,q$)}
+
+% Random process
+\newcommand{\wtil}{\Tilde{w}}
+\newcommand{\randpr}[1]{X_n(#1)}
+
+% Gaussian
+\newcommand{\gau}{\mathcal{N}}
+
+% Filtering
+\newcommand{\desest}{\hat{d}_n}
+\newcommand{\des}{d_n}
+\newcommand{\err}{\epsilon_n}
+\newcommand{\opt}{\textrm{opt}}
+
+% Estimation and inference
+
+% window function for Einstein-Wiener-Khinchin Theorem
+\newcommand{\win}{w_n^N}
+\newcommand{\ejomg}{e^{j\Omega}}
+\newcommand{\xdft}{X^N (\ejomg)}
+\newcommand{\xproc}{x_n^N}
+\newcommand{\xprocrev}{x_{-n}^N}
+
+
+\newcommand{\DTFT}{\textrm{DTFT}}
+
+% Estimator
+\newcommand{\pmean}{\hat{\mu}}
+
+
+
+% Ordinary Least Square
+\newcommand{\OLS}{\textrm{OLS}}
+\newcommand{\thetab}{\boldsymbol{\theta}}
+\newcommand{\Thetab}{\boldsymbol{\Theta}}
+\newcommand{\mub}{\boldsymbol{\mu}}
+\newcommand{\phtheta}{\phi(\thetab)}
+\newcommand{\thetaols}{\thetab^\OLS}
+\newcommand{\cov}{\textrm{cov}}
+\newcommand{\prethe}{\hat{\thetab}}
+
+% ML estimate
+\newcommand{\xb}{\mathbf{x}}
+\newcommand{\ml}{\textrm{ML}}
+\newcommand{\Gb}{\mathbf{G}}
+
+% MAP
+\newcommand{\map}{\textrm{MAP}}
+\newcommand{\thetamap}{\thetab^\map}
+\newcommand{\mb}{\mathbf{m}}
+\newcommand{\cb}{\mathbf{C}}
+\newcommand{\mbt}{\mb_{\thetab}}
+\newcommand{\cbt}{\cb_{\thetab}}
+
+
+\title{3F3 Statistical Signal Processing}
+\author{Howard Mei} 
+\begin{document}
+  \pagenumbering{arabic}
+  \maketitle
+
+\section{Probability Space}
+\subsection{Notation}
+\begin{itemize}
+\item $x\in\mathbf{A}$ \qquad x is an element of $\mathbf{A}$ "Set membership"
+\item $\mathbf{A\subseteq\Omega}$\qquad$\mathbf{A}$ is a subset of $\mathbf{\Omega}$
+\item $\mathbf{A\subset\Omega}$\qquad$\mathbf{A}$ is a proper subset of $\mathbf{\Omega}$
+\item $\mathbf{A \cup B}$ \qquad Union of two sets
+\item $\mathbf{A \cap B}$ \qquad Intersection of two sets
+\item $\mathbf{A^c}$ \qquad \quad \: Complementary Set
+\item $\mathbf{A \backslash B}$ \qquad \: $\mathbf{A \cap B^c}$ intersection of A with not B
+\item $\emptyset$ \qquad \qquad \, Empty set
+\end{itemize}
+
+\subsection{Probability Space}
+\begin{itemize}
+\item \textbf{Random experiment} is used to describe any situation which has a set of possible outcomes, each of which occurs with a particular probability.
+\item \textbf{Sample space} $\Omega$ is the set of all possible outcomes of the \textbf{random experiment}. 
+\item \textbf{Event} any subset $\mathbf{A\subseteq\Omega}$   
+\item \textbf{Probability} $P$ mapping/function from events to a number in the interval $[0,1]$. Therefore, specify $\{P\mathbf{(A),A\subset\Omega\}}$  
+\item \textbf{Probability Space} defined as: $(\Omega , P)$ 
+\item \textbf{Indicator function} for a set or event E defined as:
+\[ \mathbb{I}_E(t)= \left\{
+\begin{array}{ll}
+1 \textrm{ if } t \in E ,\\
+0 \textrm{ if } t \not\in E
+
+\end{array}
+\right.
+\]
+
+\item Examples:
+\begin{itemize}
+\item Toss a coin twice.  $\Omega = \{HH,HT,TH,TT\}$ - Finite set
+\item The temperature is a perturbation of seasonal average.  $\Omega = (-\infty , \infty)$ - Real line 
+\item Toss a coin n times. One elementary outcome is $\omega = (o_1,o_2,...,o_n)$
+$$\Omega = \{\omega = (o_1,o_2,...,o_n):o_i \in \{ H,T\} \}.$$
+\item Toss a coin n times, the event \textbf{E} that the first head Occurs on third toss is:
+$$\mathbf{E} = \{\omega = (T,T,H,o_4,o_5,...,o_n):o_i \in \{ H,T\} \textrm{ for } i>3 \}.$$
+$$P(\mathbf{E}) = (1/2)^3$$
+\end{itemize}
+\end{itemize}
+
+\subsection{Axioms of probability}
+A probability P assigns each event $\mathbf{E}$, $\mathbf{E} \subset  \Omega$, a number in [0,1] and P must satisfy following properties:
+\begin{itemize}
+\item $P(\Omega) = 1$
+\item For events A,B such that $\mathbf{A \cap B = \emptyset}$ (i.e. disjoint) then $P(\mathbf{A \cup B}) = P(\mathbf{A}) + P(\mathbf{B})$
+\item if $A_1,A_2...$ are disjoint then $P(\cup_{i=1}^\infty A_i) = \sum_{i=1}^\infty P(A_i)$.
+\item The third one implies the second one.
+\end{itemize}
+
+
+Examples: 
+\begin{enumerate}[label=(\roman*)]
+    \item Show that, if event $\mathbf{A \subset B}$ then $P(A) \le P(B)$. 
+    $$B = (B \cap A^c) \cup A = (B \backslash A) \cup A$$
+    $$P(B) = P(B \backslash A) + P(A) \le P(A)$$
+    \item Show that, $P(A^c) = 1 - P(A)$
+    $$ \Omega = A \cup A^c $$
+    $$P(\Omega) =P(A) + P(A^c) = 1$$
+    \item Defining P: $ \Omega $ is a finite discrete set, i.e. $ \Omega=\{\omega_1,\omega_2,...,\omega_n\} $. Let $p_1,p_2,...,p_n$ be non negative numbers that add to 1. For any event A, set,
+    $$ P(A) = \sum_{i=1}^n\mathbb{I}_A(\omega_1)P_i $$ 
+    Let $P_i = 1/n$. Then 
+    $$P(\{\omega_i\}) = p_i = 1/n$$
+    i.e. each outcome is equally likely. This is the \textit{uniform probability distribution}.
+\end{enumerate}
+
+
+
+
+
+
+
+
+\subsection{Conditional Probability}
+\begin{itemize}
+\item Definition: The conditional probability of event A occurring given that event B has occurred : 
+$$P(A|B) = \frac{P(A\cap B)}{P(B)}, \textrm{ for }P(B)>0$$
+\begin{itemize}
+\item Think of $P(A|B)$ as the fraction of times A occurs among those in which B occurs.
+\item $AB$ is shorthand for $A\cup B$
+\item Example: Verify any set given set $G$ is a probability i.e. $P(\cdot |G)$ is a probability
+$$\textrm{Firstly, } P(\Omega | G) = P(\Omega \cup G)/ p(G) =1 $$
+
+\begin{align*}
+\textrm{Secondly, for disjoint events A and B } P(A \cap B | G) &= P(AG \cap BG)/ p(G) \\
+&= (P(AG) + P(BG)) / p(G) \\
+&= P(A|G) + P(B|G)
+\end{align*}
+
+\end{itemize}
+
+\item Probability Chain Rule 
+$$ P(A_1...A_n) =  P(A_1)P(A_2|A_1)...P(A_n|A_{n-1},...,A_1) = P(A_1)\prod_{i=2}^nP(A_i|A_{i-1},...,A_1) = \prod_{i=1}^nP(A_i|A_{i-1},...,A_1)  $$
+
+\item Independence: two events A and B are independent if 
+$$P(AB) = P(A \cup B) = P(A)P(B)$$
+\begin{itemize}
+\item if A and B are independent then $P(A|B) = P(A)$
+\end{itemize}
+
+\item \textit{Bayes' Theorem}:
+$$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$$
+
+\begin{itemize}
+\item Example: A is the event the email is spam and B is the event the email contains "free". We know $P(B|A) = 0.8$ and $P(B|not \: A) = 0.1$ and $P(A) = 0.25$ What is the probability the email is spam given the email contains "Free"?
+$$P(A|B) = \frac{P(B|A)P(A)}{P(B)} = \frac{0.8 * 0.25}{0.8 * 0.25+0.1 *0.75}=0.727$$
+\item This is an example of an \textit{expert} system.
+\end{itemize}
+\end{itemize}
+
+\subsection{Random Variables}
+\begin{itemize}
+\item Definition: Given a probability space$(\Omega, P)$, a random variable is a function $X(\omega)$ which maps each element $\omega$ of the sample space $\Omega$ onto a point on the real line.
+\begin{itemize}
+\item Example: Flipping a coin twice. Sample Space: $\Omega = \{HH,HT,TH,TT\}$ Define $X(\omega)$ be the number of heads.
+\begin{table}[h]
+\begin{subtable}[h]{.5\linewidth}
+\centering
+\begin{tabular}{ |c|c|c|} 
+\hline
+$\omega$ & $P(\{\omega\})$ & $X(\omega)$ \\
+\hline
+\hline
+TT & 0.25 & 0 \\ 
+TH & 0.25 & 1 \\ 
+HT & 0.25 & 1 \\ 
+HH & 0.25 & 2 \\ 
+\hline
+\end{tabular}
+\end{subtable}
+\hfill
+\begin{subtable}[h]{0.5\linewidth}
+\centering
+\begin{tabular}{ |c|c|c| } 
+\hline
+$x$ & Pr$(X=x)$ \\
+\hline
+\hline
+0 & 0.25\\ 
+1 & 0.5 \\ 
+2 & 0.25\\ 
+ 
+\hline
+\end{tabular}
+\end{subtable}
+\end{table}
+\item The second table does not mention the sample space. The range of X is listed along with the probability associated. 
+\item However, there is a sample space lurking behind every definition of a rv.
+\item The Probability that $X=x$ is inherited from the definition of $(\Omega, P)$ and the mapping $X(\omega)$ 
+\item For any set $A \subset (-\infty, \infty)$, we define
+$$ Pr(X \in A) = P(\{\omega : X(\omega)  \in A\})$$
+
+\end{itemize}
+\item Discrete random variable: range is a finite set, say $\{x_1,...,x_i,...,x_M \}$ or a countable set, say$\{x_1,x_2,... \}$.
+\begin{itemize}
+\item A set E is countable if you can define a one-to-one mapping from E to the set of integers .
+\item Examples: all rational number, all even number. The interval$[0,1]$ is not countable.
+\item Definition: Discrete rv X with range $\{x_1,x_2,... \}$, the pmf is the function $p_x$ : $\{x_1,x_2,... \}$ $\rightarrow [0,1]$ where 
+$$p_X(x_i) = Pr(X=x_i) \textrm{and } \sum_{i=1}^\infty p_X(x_i) = 1 $$ 
+The pmf is a complete description: for any set A,
+$$ Pr(X \in A) = \sum_{i=1}^\infty \mathbb{I}_A(x_i)p_X(x_i) $$
+
+\end{itemize}
+\item Continuous random variable: defined as having a probability density function(pdf)
+\begin{itemize}
+\item Definition: A random variable is continuous if there exists a non-negative function $f_X(x) \ge 0 $ such that $\int_{-\infty}^\infty f_X(x) \, dx = 1$ and for any set A
+$$ Pr(X \in A) = \int_{-\infty}^\infty \mathbb{I}_A(x)f_X(x) \, dx  $$
+\item Example: $A = [a,b]$ then 
+$$Pr(X \in A) = Pr(a \le X \le b) = \int_a^b f_X(x) \, dx$$
+\begin{itemize}
+\item pdf $f_X$ assigns 0 probability to any particular point $x \in \mathbb{R}$ Thus $Pr(X=x)=0$ for all x.
+$$Pr(X \in [a,b]) = Pr(X \in (a,b]) = Pr(X \in (a,b))$$
+\item This means a continuous rv has no concentration of probability at points like a discrete rv does 
+\end{itemize}
+\end{itemize}
+\item Cumulative distribution function: Describe both \underline{discrete and continuous} random variables and is defined to be 
+$$F_X(x) = Pr(X \le x)$$
+Properties:
+\begin{enumerate}
+
+\item $0 \le F_X(x) \le 1$
+\item $F_X(x)$ is  non-decreasing as x increases
+\item Pr$(x_1 < X \le x_2) = F_X(x_2) - F_X(x_1)$
+\item $\lim_{x \rightarrow -\infty} F_X(x) = 0$ and $\lim_{x \rightarrow \infty} F_X(x) = 1$ 
+\item If $X$ is a continuous r.v. then $F_X(x)$ is continuous 
+\item If $X$ is discrete then $F_X(x)$ is right-continuous: $F_X(x) = \lim_{t \downarrow x} F(t) $ for all x
+
+\end{enumerate}
+For Property 6
+\begin{itemize}
+\item For a discrete rv with range ${x_1,...,x_i,...,x_M}$
+$$F_X(x) = \sum_{j=1}^M P(x_j) \mathbb{I}_{[x_j, \infty)}(x)  \qquad \qquad \textrm{( [ touch ( not touch)} $$  is a step function
+\end{itemize}
+\item CDF and PDF for continuous rv
+$$F_X(x) = Pr(X \le x) = \int_{-\infty}^x f_x(t) \, dt$$
+$$f_X(t) = \frac{dF_X(t)}{dx}$$
+\begin{itemize}
+\item CDF is useful when transformation of a random variable 
+\begin{align*}
+Y &= r(X) \quad \quad \textrm{   r is a strictly increasing function} \\
+F_Y(y) &= Pr(Y \le y)\\
+&= Pr(r(X) \le y)\\
+&= Pr(X \le r^{-1}(y)) \\
+&= F_X(r^{-1}(y)) \\
+f_Y(y) &= f_X(r^{-1}(y)) * \frac{dr^{-1}(y)}{dy}
+\end{align*}
+\end{itemize}
+\end{itemize}
+
+\section{Multivariates}
+\subsection{Bivariates}
+\subsubsection{Discrete bivariates}
+\begin{itemize}
+\item joint pmf: $p_{X,Y}(x_i,y_j) = Pr(X=x_i, Y=y_j)$
+\item marginal pmf: 
+$$ P_X(x_k) = \sum_{j=1}^n P_{X,Y}(x_k,y_j), \qquad  P_Y(y_k) = \sum_{i=1}^m P_{X,Y}(x_i,y_k) $$ 
+\item Independent if:
+$$p_{X,Y}(x,y) = p_X(x)p_Y(y)\quad \textrm{for all (x,y)}$$ 
+\item Conditional Probability 
+$$p_{X|Y}(x|y)=\frac{p(X,Y)(x,y)}{P_Y(y)}$$
+\end{itemize}
+\subsubsection{Continuous bivariates}
+\begin{itemize}
+\item For continuous random variables X and Y, we call $f(x,y)$ their \textbf{Joint probability density function}:
+\begin{itemize}
+\item $\int_{-\infty}^{\infty} \left( \int_{-\infty}^{\infty} f(x,y) \,dx \right) \, dy =1$  and
+\item for any sets(events) $A \subset \mathbb{R}$ and  $B \subset \mathbb{R}$
+$$ Pr(X \in A, Y \in B) = \int_{-\infty}^{\infty} \mathbb{I}_B(y) \left( \int_{-\infty}^{\infty} \mathbb{I}_A(x)f(x,y) \, dx \right) \, dy $$
+
+
+\end{itemize}
+\item Independent
+$$\textrm{If and only if:   } f_{X,Y}(x,y) = f_X(x)f_Y(y)$$
+\item Conditional probability density function:
+$$f_{X|Y}(x|y)=\frac{f(X,Y)(x,y)}{f_Y(y)}$$
+Moreover, for all sets A
+$$Pr(X \in A| Y =y) = \int_{-\infty}^{\infty} \mathbb{I}_A(x)f_{X|Y}(x|y) \, dx$$
+\item Example: Let $X_1, X_2$ be two independent rvs with $f_1(x_1), f_2(x_2)$ and let $Y=X_1+X_2$. Find the pdf $f_{X_1,y}$ and $f_Y$. \\
+
+Write the joint pdf using conditional pdf formula:
+$$f_{X_1,y}(x_1,y) = f_1(x_1)f{Y|X_1}(y|x_1). $$
+Since $Y=X_2+x_1$, $f{Y|X_1}(y|x_1) = f_2(y-x_1)$
+$$f_Y(y) = \int_{-\infty}^{\infty} f_2(y-x_1)f_1(x_1) \, dx_1$$ 
+which is the convolution of $f_1$ and $f_2$ 
+\end{itemize}
+\subsubsection{Expected Value Operations}
+\begin{itemize}
+\item Expectation 
+\begin{itemize}
+\item Definition: The \textit{Expected value } or \textit{mean value} or \textit{first moment } of X is 
+  \[
+    \mathbb{E}\{X\}=\left\{
+                \begin{array}{lll}
+                  \sum_x & xp_X(x)  \qquad &\textrm{Discrete}\\
+                  \int_{-\infty}^{\infty} & xf_X(x) \, dx \qquad &\textrm{Continuous}
+                \end{array}
+              \right.
+  \]
+
+\end{itemize}
+
+\item Expectation of a function of rv 
+\begin{itemize}
+\item Definition: For any function $r(\cdot)$ compute $\mathbb{E}\{r(X)\}$ by replacing x in the above formulae with $r(x)$ For example, the higher moments are $\mathbb{E}(X^n)$ set $r(X)=X^n$
+\item Example: For an event A:
+  \[
+    \mathbb{E}\{\mathbb{I}_A(X)\}=\left\{
+                \begin{array}{lll}
+                  \sum_x &\mathbb{I}_A(X)p_X(x)  \qquad &\textrm{Discrete}\\
+                  \int_{-\infty}^{\infty}&\mathbb{I}_A(X)f_X(x) \, dx \qquad &\textrm{Continuous}
+                \end{array}
+              \right.
+  \]
+Then $\mathbb{E}\{\mathbb{I}_A(X)\} =$ Pr$\{X \in A\}$
+
+\item Example: Take a unit length stick and break it at random. Find the mean of the long piece.
+
+Call the longer piece Y and the break point X. Then X is a uniform rv in $[0,1]$, $Y =$ max $\{X, 1-X \}$ and,
+\begin{align*}
+\mathbb{E}{Y} &= \mathbb{E}(max\{X, 1-X \}) \\
+& = \int_{-\infty}^{\infty}max\{x, 1-x \} f_X(x) \, dx \\
+& = \int_0^1 max\{x, 1-x\} \, dx \\
+& = \int_0^0.5 (1-x) \, dx + \int_0.5^1 x \, dx = 0.75
+\end{align*}
+
+\end{itemize}
+\item Expectation of a function of bivariates
+\begin{itemize}
+\item Definition: The mean of a function $r(X,Y)$ of the bivariate $(X,Y)$ is 
+  \[
+    \mathbb{E}\{r(X,Y)\}=\left\{
+                \begin{array}{lll}
+                  \sum_y\sum_x &r(x,y)p_{X,Y}(x,y)  \qquad &\textrm{Discrete}\\
+                  \int_{-\infty}^{\infty}\int_{-\infty}^{\infty}&r(x,y)f_{X,Y}(x,y) \, dxdy \qquad &\textrm{Continuous}
+                \end{array}
+              \right.
+  \]
+\item The conditional expectation is
+  \[
+    \mathbb{E}\{r(X,Y)|Y=y\}=\left\{
+                \begin{array}{lll}
+                  \sum_x &r(x,y)p_{X|Y}(x|y)  \qquad &\textrm{Discrete}\\
+                  \int_{-\infty}^{\infty}&r(x,y)f_{X|Y}(x|y) \, dx \qquad &\textrm{Continuous}
+                \end{array}
+              \right.
+  \]
+\item By using conditional probability we can calculate $\mathbb{E}  \{ r(X,Y) \}$:
+\begin{align*}
+\mathbb{E}\{r(X,Y)\} &= \int_{-\infty}^{\infty}\int_{-\infty}^{\infty}r(x,y)f_{X,Y}(x,y) \, dxdy \\
+ &= \int_{-\infty}^{\infty} \left( \int_{-\infty}^{\infty}r(x,y)f_{X|Y}(x|y) \, dx \right) dy\\
+ &= \int_{-\infty}^{\infty} \mathbb{E}\{r(X,Y)|Y=y\} f_Y(y) \, dy \\
+\end{align*}
+
+\end{itemize}
+\item Rule of iterated expectation \\
+Discrete:
+\[
+\mathbb{E}\{r(X,Y)\} = \mathbb{E}(\mathbb{E}\{r(X,Y)|Y\})
+\]
+Continuous:
+\begin{align*}
+\mathbb{E}\{r(X,Y)|Y=y\} &= \int_{-\infty}^{\infty} r(x,y)f_{X|Y}(x|y) \, dx \\
+\mathbb{E}\{r(X,Y)\}&= \int_{-\infty}^{\infty}\mathbb{E}\{r(X,Y)|Y=y\} f_Y(y) \, dy
+\end{align*}
+
+\end{itemize}
+\subsection{Multivariates}
+\subsubsection{Definition}
+\begin{itemize}
+\item Let $X_1,X_2,...,X_n$ be n continuous/discrete random variables. We call $X=(X_1,...,X_n \in \mathbb{R}^n$ a continuous/discrete random vector.
+\item Let $X=(X_1,...,X_n \in \mathbb{R}^n$ be a continuous random vector. Let $f(x_1,...x_n)$ be a non-negative function that integrates to 1. Then f is called the pdf of the random vector X if 
+\[Pr(X_1 \in A_1,...,X_n \in A_n) \\
+= \int_{-\infty}^{\infty}\mathbb{I}_{A_n}(x_n)...\int_{-\infty}^{\infty}\mathbb{I}_A{}_1(x_1)f(x_1,...x_n)d_{x_1}...d_{x_n}
+\]
+\item pdf of $X_i$ is obtained by integrating $f(x_1,..,x_n)$ over the full range except $x_i$:
+\[f_{X_i}(x_i) = \int_{-\infty}^{\infty}...\int_{-\infty}^{\infty}f(x_1,..,x_n)d_{x_1}...d_{x_{i-1}}d_{x_{i+1}}d_{x_n}
+\]
+This is called ith marginal of $f(x_1,..,x_n)$
+\end{itemize}
+\subsubsection{Independence}
+\begin{itemize}
+\item Definition: The n random variables $X_1,...X_n$ are independent if and only if for every $A_1,...A_n$
+\[ Pr(X_1 \in A_1,...,X_n \in A_n) = Pr(X_1 \in A_1)...Pr(X_n \in A_n)
+\]
+\item joint pdf = product of marginals:
+\[ f(x_1,...,x_n) = f_{X_1}(x_1)...f_{X_n}(x_n)
+\]
+\begin{itemize}
+\item Example: The pdf $f(x_1,...,x_n)$ of a Gaussian random vector $X=(X_1,...,X_n)$ is 
+\[ \frac{1}{(2\pi )^{n/2}(\det C)^{1/2}} \exp \left\{ -\frac{1}{2}(x-m)C^{-1}(x-m)^T  \right\}
+\]
+Where $m=(m_1,...,m_n)$ is the row vector of means and C is the covariance matrix
+\[
+m_i = \mathbb{E}\{X_i\} \qquad \textrm{and} \qquad [C]_{i,j}=\mathbb{E}\{(X_i - m_i) (X_j - m_j)\}
+\]
+Show that if independent, $C_{i,j} = 0$ for $i\not = j$ then 
+\[f(x_1,...,x_n) = f_{X_1}(x_1)...f_{X_n}(x_n)
+\]
+Proof: Call $C_{i,i} = \sigma_i^2 $
+\[
+(x-m)C^{-1}(x-m)^T = \sum_{i=1}^n \frac{(x_i-m_i)^2}{\sigma_i^2}
+\]
+Hence $f(x_1,...,x_n)$ is 
+\[
+\frac{1}{(2\pi )^{n/2}(\det C)^{1/2}} \exp \left\{ -\frac{1}{2} \sum_{i=1}^n \frac{(x_i-m_i)^2}{\sigma_i^2}  \right\} 
+\]
+\begin{align*}
+&= \frac{1}{\sqrt{(2\pi)}\sigma_1 ... \sqrt{(2\pi)}\sigma_n} \prod_{i=1}^n \exp \left\{ -\frac{1}{2}  \frac{(x_i-m_i)^2}{\sigma_i^2}  \right\} \\
+&= f_{X_1}(x_1)...f_{X_n}(x_n)
+\end{align*}
+\end{itemize}
+\item If $X_1,...,X_n$ are independent then 
+$$\mathbb{E}\{\prod_{i=1}^n X_i \} = \prod_{i=1}^n \mathbb{E}\{X_i\}$$
+That is the expectation of the product is the product of expectation
+\end{itemize}
+\subsubsection{Change of variables}
+\begin{itemize}
+\item The change of variable formula can be applied to random vectors. Let
+
+\[
+\begin{bmatrix}
+Y_1\\
+\vdots \\
+Y_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+g_1(X_1,...,X_n) \\
+\vdots \\
+g_n(X_1,...,X_n) \\
+\end{bmatrix}
+\]
+or 
+\[ Y = G(X)
+\]
+\item If G is invertible then $X=G^{-1}(Y).$ Let $H(Y)=G^{-1}(Y)$. So 
+\[
+\begin{bmatrix}
+X_1\\
+\vdots \\
+X_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+h_1(Y_1,...,Y_n) \\
+\vdots \\
+h_n(Y_1,...,Y_n) \\
+\end{bmatrix}
+\]
+\item The \textit{Jacobian }matrix of partial derivatives of $H(y)$ is formed:
+\[
+J(y) = 
+\begin{bmatrix}
+\frac{\partial }{\partial y_1}h_1 & \hdots & \frac{\partial }{\partial y_n}h_1 \\
+& \vdots & \\
+\frac{\partial }{\partial y_1}h_n & \hdots & \frac{\partial }{\partial y_n}h_n
+\end{bmatrix}
+\]
+Then 
+\[
+f_Y(y) = f_X(H(y))|\det J(y)|
+\]
+\begin{itemize}
+\item Example: Let $X_1,...,X_n$ be independent Gaussian rv where $X_i$ is $\mathcal{N}(0,1)$ Let S be an invertible matrix and m a column vector. Let $Y = m + SX$ where $X=(X_1,..,X_n)^T$. Show Y is also a Gaussian random vector. \\
+
+Use the Change of variable result:
+\[
+H(Y) = S^{-1}(Y-m)
+\]
+The Jacobian Matrix$J(y)$:
+\[
+J(y) = S^{-1}
+\]
+Applying change of variable formula gives
+\[
+f_Y(y) = f_X(S^{-1}(y-m))|\det S^{-1}| 
+\]
+where $f_X(x_1,...,x_n) = \frac{1}{(2\pi )^{n/2}} \exp \left\{ -\frac{1}{2}x^Tx \right\}$
+\[
+f_Y(y) = \frac{|\det S^{-1}| }{(2\pi)^{n/2}} \exp \left\{ -\frac{1}{2}(y-m)^T(S^{-1})^T S^{-1}(y-m) \right\}
+\]
+is the density of a Gaussian vector with mean m and covariance matrix $SS^T$ . Note that $\det S^{-1} = 1/detS$, $\det(SS^T)=\det S \det S^T = (\det S)^2$
+\item An affine transformation of a Gaussian vector is still a Gaussian vector. This gives a method for generating any Gaussian vector from iid Gaussian random variables.
+\item To Generate a $\mathcal{N}(m, \Sigma)$ vector:
+\begin{itemize}
+\item Decompose the symmetric matrix $\Sigma = SS^T$ .
+\item Output $m+SX$ where $X=(X_1,...,X_n)^T$ where $X_1,...,X_n$ are independent $\mathcal{N}(0,1)$
+
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\subsubsection{Characteristic function}
+\begin{itemize}
+\item Definition: The characteristic function of a discrete or continuous random variable X is:
+\[
+\varphi_X(t) = \mathbb{E} \{ \exp (itX)\}, \qquad t \in \mathbb{R}
+\]
+For a random vector $X=(X_1,X_2,...,X_n)$,
+\[
+\varphi_X(t) = \mathbb{E} \{ \exp (it^T X)\}, \qquad t \in \mathbb{R}^n
+\]
+Similarly to Fourier Transform, the characteristic function uniquely describes a pdf.
+\begin{itemize}
+\item Example: Show $\varphi_X(t) = \exp (itX) \exp (-\frac{1}{2}\sigma^2t^2)$ when X is a Gaussian random variable with mean $\mu$ and variance $\sigma^2$.
+\begin{align*}
+&\mathbb{E} \{ \exp (itX)\} \\
+&= \int_{-\infty}^\infty e^{itx} \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{1}{2\sigma^2}(x-\mu)^2\right) \, dx \\
+&= e^{it\mu} \int_{-\infty}^\infty e^{its} \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{1}{2\sigma^2}s^2\right) \, ds, \qquad \textrm{let } s = x-\mu \\
+&= e^{it\mu}e^{-\frac{1}{2}\sigma^2t^2}   \qquad \textrm{Fourier transform table}
+\end{align*}
+\item Example: Compute the characteristic function $\varphi_Y(t)$ of $Y= \sum_{i=1}^n X_i$ where $X_i$ are \textcolor{blue1}{independent} random variables.
+\begin{align*}
+&\mathbb{E} \{ \exp (itY)\} \\
+&=  \mathbb{E} \{ \exp (itX_1) \exp (itX_2)... \exp (itX_n)\}\\
+&= \mathbb{E} \{ \exp (itX_1)\} \mathbb{E} \{ \exp (itX_2)\}...\mathbb{E} \{ \exp (itX_n)\}\\
+&= \varphi_{X_1}(t)...\varphi_{X_n}(t)
+\end{align*}
+\item The characteristic function of the \textcolor{blue1}{sum of independent random variables} is the \textcolor{blue1}{product} of their individual characteristic functions.
+
+\item Example: (Moments) Using $\varphi_{X}(t)$, compute $\mathbb{E}\{X^n\}$
+\[
+\frac{d^n}{dt^n}\varphi_{X}(t) = \mathbb{E} \left\{ \frac{d^n}{dt^n} \exp(itX)\right\} = \mathbb{E} \{ i^n X^n \exp(itX)\}
+\]
+Thus $i^n \mathbb{E}\{X^n\} = \frac{d^n}{dt^n} \varphi_{X}(t=0)$ (Putting t=0 for the above equation and make the exponential go to 1)
+
+\end{itemize}
+
+\item Equality of characteristic functions: Suppose that X and Y are random vectors with same characteristic functions: $\varphi_{X}(t) = \varphi_{Y}(t)$ for all $t \in \mathbb{R}^n$. Then X and Y have the same probability distribution
+
+\item Example using characteristic function:
+Let $X_1,X_2,...,X_n$ be independent Gaussian random variables where $X_i$ is $\mathcal{N}(0,1)$. Then $Y=m+SX$, where $m\in \mathbb{R}^d$ where $d<n$, is the multivariate Gaussian with mean m and covariance $SS^T$.
+
+Verify the result using characteristic function, that is let $t \in \mathbb{R}^d $ and compute $\mathbb{E}\{\exp{(it^TY)}\}$
+\begin{align*}
+\exp{(it^TY)} &= \exp(it^Tm)\exp(it^TSX) \\
+&=\exp(it^Tm)\exp(ir_1X_1)...\exp(ir_nX_n)\\
+\end{align*}
+Where vector $r=t^TS$
+\begin{align*}
+&\mathbb{E}\{\exp{(it^TY)}\} \\
+&= \exp(it^Tm)\mathbb{E}\{ \exp(ir_1X_1)...\exp(ir_nX_n)\}\\
+&= \exp(it^Tm) \exp(-\frac{1}{2}r_1^2)...\exp(-\frac{1}{2}r_n^2)\\
+&= \exp(it^Tm) \exp(-\frac{1}{2}t^TSS^Tt)\\
+\end{align*}
+\end{itemize}
+
+\section{Random process}
+\subsection{Definition of random process}
+\begin{itemize}
+\item Definition:A discrete random (or stochastic) process is one of the following infinite collection of random variables
+\[
+\{...,X_{-1},X_0,X_1,... \} \quad or \quad \{ X_0,X_1,...\} \quad or \quad \{ X_1,X_2,... \} 
+\]
+Notation: $\{ X_n\}_{n_i}^j = \{X_i,X_{i+1},...,X_j\}$
+\begin{itemize}
+\item Example: Random phase cosine. Let $X_n=\cos(2\pi fn + \phi)$ where $\phi$ is a Uniform random variable drawn from $[0,2\pi)$
+To generate 
+\[
+\{ X_n\}_{n=0}^\infty = \{X_0,X_{1},...\}
+\] 
+first sample $\phi$ and then set 
+\[
+X_n = \cos(2\pi fn + \phi)
+\]
+for $n=0,1,...$\\
+
+\item Example: infinite collection of independent random variables \\
+Let $0<q<1$ and $U_1,U_2,...$ be iid discrete random variables such that 
+\[
+Pr(U_n=1)=q, \qquad \qquad Pr(U_n=-1)=1-q
+\]
+\item Example: Random walk\\
+Generate the sequence $U_1,U_2,...$ as in the previous example and define a new random process $X_0,X_1...$ as follows: set $X_0=0$ and 
+\[
+X_n = X_{n-1}+U_n
+\]
+for $n > 0$\\
+We could equivalently write
+  \[
+    X_n=\left\{
+                \begin{array}{ll}
+                 X_{n-1} + 1   \qquad &w.p. q\\
+                 X_{n-1} - 1   \qquad &w.p. 1-q
+                \end{array}
+              \right.
+  \]
+and $X_0=0.$
+\end{itemize}
+\item Definition (Finite dimensional distributions)
+\begin{itemize}
+\item To completely specify a discrete time random process $X_0,X_1,...,$ we must specify their joint probability density function
+$$f_{X_0,X_1,...,X_n}(x_0,x_1,...,x_n)$$
+for all integers $n\ge 0$ when $X_0,X_1,...$ is a collection of continuous random variables 
+\item For discrete time random process $X_0,X_1,...,$ we must specify their joint probability mass function
+$$p_{X_0,X_1,...,X_n}(x_0,x_1,...,x_n)$$
+for all integers $n \ge 0$
+\item For any fixed n, you can treat $(X_0,X_1,...,X_n)$ as a random vector and just as in the case of random vectors, we use their joint pdf or joint pmf to describe how the random vector should be generated.
+\item For many interesting random processes, specifying $p_{X_0,X_1,...,X_n}(x_0,x_1,...,x_n$ is not too arduous. One such process which underpins many real world statistical models is a \textbf{Markov chain}.
+\end{itemize}
+
+\end{itemize} 
+\subsection{Markov Chain}
+\subsubsection{Introduction and Properties}
+\begin{itemize}
+\item Example \\
+A gambler has initial wealth r bets and keep playing until wealth is R or zero. Amount bet is b at every bet. The random process now is:
+\[
+X_{n+1} = \left\{ \begin{array}{ll}
+					X_n \quad & \textrm{if} X_n \in \{0,R \}=0 \\
+					X_n + b \quad & w.p. q \\
+					X_n - b \quad & w.p. 1-q
+\end{array} \right.
+\] 
+The generate $X_{n+1}$, only the value of $X_n$ is needed and not its past values. Any discrete time random process with this property is called a Markov process. \\
+It can be shown that the probability of wealth doubling when $q \le 0.5$is 
+\[
+\left[ 1 = \left(\frac{1-q}{q}\right)^{r/b}\right]^{-1}
+\]
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ |c|c|c|c|} 
+    \hline
+     & b=1pound & b=10pence  & b=1pence\\
+    \hline
+    \hline
+    $q=0.5$ & 0.5 & 0.5 & 0.5 \\ 
+    $q=0.49$ & 0.40 & 0.02 & $4.3 \times 10^{-18}$\\ 
+    \hline
+    \end{tabular}
+    \caption{Probability of doubling wealth with an initial fortune of 10 pounds.}
+    %\label{tab:my_label}
+\end{table}
+
+
+\item Definition of Markov chain Let $\{ X_n\}_{n \ge 0}$ be discrete random variables taking values in $S = \{1,...,L \}.$
+\begin{itemize}
+\item The transition probability matrix Q is a non-negative matrix 
+\end{itemize}
+
+\[
+\begin{bmatrix}
+Q_{1,1 } & Q_{1,2} & \cdots & Q_{1,L} \\
+Q_{1,1 } & Q_{1,2} & \cdots & Q_{1,L} \\
+\vdots & \vdots & \ddots & \vdots \\
+Q_{L,1 } & Q_{L,2} & \cdots & Q_{L,L} \\
+\end{bmatrix}
+\]
+and each row sums to one.
+\[
+Q_{1,L} = Pr(X_{n+1}=L | X_n = 1) 
+\]
+from state 1 jump to state L is the probability of L given  current state is L
+\begin{itemize}
+\item The conditional pmf of $X_n$ given $X_0=i_0,...,X_{n-1}=i_{n-1}$
+\[Pr(X_n =i_n | X_0=i_0,...,X_{n-1}=i_{n-1}) = Q_{i_{n-1},i_n} = Pr(X_n =i_n | X_{n-1}=i_{n-1})
+\]
+\end{itemize}
+\item Example: Two state Markov chain 
+\begin{itemize}
+\item For a two state Markov Chain, $S={1,2}$, let.
+\[
+Q = \begin{bmatrix}
+1- \alpha & \alpha \\
+\beta     & 1 - \beta \\
+\end{bmatrix}
+= \begin{bmatrix}
+Pr(X_{n+1} =1 | X_n =1) & Pr(X_{n+1} = 2 | X_n =1) \\
+Pr(X_{n+1} =1 | X_n =2) & Pr(X_{n+1} = 2 | X_n =2) \\
+\end{bmatrix}
+\]
+\item Think of MC as an evolving sequence of random variables, generate $X_0$, then $X_1$, then $X_2$ etc.
+\item The chain jumps between values 1 and 2 according to Q of pictorially as above.
+\item Assume the pmf of $ X_0$ is 
+\[
+p_{X_0} =i = \lambda_i, \quad i=1,...,L
+\]
+\[
+\lambda = \begin{bmatrix}
+\lambda_1 \\
+\vdots \\
+\lambda_L
+\
+\end{bmatrix}
+\]
+Note that $\lambda_i > 0$ and $\sum \lambda_i = 1$
+\item The definition states how $X_0$ should be generated and then how every other $X_k$ should.
+\item The process just defined is called a Markov chain. The pair $(\lambda, Q)$ completely defines the Markov Chain.
+\item We call Q the \textit{transition probability matrix} of the MC and $\lambda$ the \textit{initial distribution} of the chain. 
+\end{itemize}
+\item \textbf{Limited memory property } is known as Markov property: Only the most recent value $X_{n-1} = i_{n-1}$ is needed to generate $X_n$, that is we don't need to know the values before.
+\end{itemize}
+
+\subsubsection{Further properties}
+\begin{enumerate}
+\item \textbf{Marginals of a Markov Chain}.
+\begin{itemize}
+\item Show that $p_{X_n}(i_n) = (\lambda Q^n)_{i_n}$ where $\lambda$ is the row vector  $\lambda = (\lambda_1,..,\lambda_L)$
+\item The joint pmf can be expressed as 
+\[p(i_0,...,i_n) = \frac{p(i_0,...,i_n)}{p(i_0,...,i_{n-1})} \frac{p(i_0,...,i_{n-1})}{p(i_0,...,i_{n-2})}\cdots \frac{p(i_0,i_1)}{p(i_0)} p(i_0)\]
+or 
+\[
+[p(i_0,...,i_n) = p(i_n|i_0,...,i_{n-1})p(i_{n-1}|i_0,...,i_{n-2})...p(i_1|i_0)p(i_0).
+\]
+\item Thus using the Markov property,
+\[
+p(i_0,...,i_n) = \lambda_{i_0}Q_{i_0,i_1}...Q_{i_{n-2},i_{n-1}}Q_{i_{n-1},i_{n}}
+\]
+\item Summing over all possible values for $i_0,...,i_{n-1}$ gives the result $p(i_n)=(\lambda Q^n)_{i_n}$
+\end{itemize}
+
+
+
+
+\item \textbf{Strict stationarity}
+\begin{itemize}
+\item Definition
+\begin{itemize}
+    \item A discrete time random process $X_0,X_1,...$ is strictly stationary if 
+    \[
+    f_{X_0,...,X_k}(x_0,...,x_k) = f_{X_m,...,X_{k+m}}(x_m,...,x_{k+m})
+    \]
+    for all k and displacement $m > 0$. That is the joint pdf of $(X_0,...,X_k)$ and $(X_m,...,X_{m+k})$ are the same. 
+    \item This definition apply to any discrete time process Markov or otherwise.
+    \item Strict stationarity means any two ``sections'' of the process 
+    \[
+    (X_0,...,X_k) \textrm{ and } (X_m,...,X_{m+k})
+    \]
+    are statistically indistinguishable for any displacement $m$. 
+    \item If $X_0,X_1,...$ were \textit{discrete} random variables then the \textit{joint pmf} instead of joint pdf is used to define strict stationarity.
+\end{itemize}
+\item Example:
+\begin{itemize}
+    \item Let $X_i$ be the average temperature of day $i$. Clearly $Pr(X_i\in A) \not = Pr(X_j\in A)$ for some $A$, i.e. $X_i$ and $X_j$ do not have the same probability distributions, if $i$ is a day in summer and $j$ a day in winter.
+    \item But if we remove the seasonal effects to obtain $\{ Y_k = X_k  - S_k\}_{k\in I}$. $Y_k$ is the deviation of the measured temperature from the anticipated seasonal value $S_k$. It is sensible to assume $\{ Y_k\}_{k\in I}$ is stationary.
+    \item Thus stationarity is a useful model for random deviations which is sometimes called noise.
+\end{itemize}
+\end{itemize}
+\item Invariant distribution of a Markov chain.
+\begin{itemize}
+    \item Definition:
+    \begin{itemize}
+        \item When the Markov chain is initialised in a very specific way.
+        
+        \item Consider the transition probability matrix $Q$ with state-space $S$. The pmf $\pi = (\pi_i : i\in S)$ is invariant for $Q$ if for all $j\in S$, 
+        \[
+        \sum_{i\in S} \pi_i Q_{i,j} = \pi_j .
+        \]
+        or
+        \[
+        \pi Q =\pi
+        \]
+        for row vector $pi$
+    \end{itemize}
+    
+    \item Example:
+    \begin{itemize}
+        \item For a two state Markov chain, $S=\{1,2 \}$, let 
+        \[
+        Q = \begin{bmatrix}
+        1-\alpha & \alpha \\
+        \beta & 1-\beta
+        \end{bmatrix}
+        \]
+        \item Check that $\pi =[\frac{\beta}{\alpha + \beta}, \frac{\alpha}{\alpha + \beta}]$ is invariant for $Q$ or show that $\pi Q = \pi$,
+        \[
+        \left[\frac{\beta}{\alpha + \beta}, \frac{\alpha}{\alpha + \beta}\right] \times  \begin{bmatrix}
+        1-\alpha & \alpha \\
+        \beta & 1-\beta
+        \end{bmatrix}  = \left[\frac{\beta}{\alpha + \beta}, \frac{\alpha}{\alpha + \beta}\right]
+        \]
+        \item there can be many pmf $\pi$ satisfies the invariant properties check that any multiple of  $\pi =[\beta, \alpha]$ is invariant for the $Q$.
+    \end{itemize}
+\end{itemize}
+\item \textbf{Fact}: \textit{The Markov chain $(\pi, Q)$ is strictly stationary}
+\begin{itemize}
+    \item Verification: apply the pmf of $X_n$ calculated before
+    \begin{align*}
+        p_{X_n}(i_n) =& (\pi Q^n)_{i_n}\\
+        =& (\pi Q \: Q^{n-1})_{i_n}\\
+        =& (\pi Q^{n-1})_{i_n} \quad (\pi Q = \pi)\\
+        \vdots & \\
+        =& \pi_{i_n}
+    \end{align*}
+    \item Also, the pmf of $(X_m,...,X_{m+k})$, for any $m\in \{0,1,... \}$, can be written as 
+    \begin{align*}
+        p(i_m,...,i_{m+k}) = p(&i_{m+k}|i_m,...,i_{m+k-1})\\
+               & \times P(i_{m+k-1}|i_m,...,i_{m+k-2})  \\
+               & \vdots \\
+               & \times p(i_{m+1}|i_m) \\
+               & \times p(i_{m}) \\
+               =\pi_{i_m}&Q_{i_m,i_{m+1}}\cdots Q_{i_{m+k-1},i_{m+k}},
+    \end{align*}                  
+    which follows from the Markov property and invariance, i.e. $p(i_m)=\pi_{i_m}$
+    \item Thus the pmf of $(X_0,...,X_k)$, setting $m=0$, is 
+    \[
+    p(i_0,...,i_k) = \pi_{i_0}Q_{i_0,i_1}...Q_{i_{k-1},i_k}.
+    \]
+    \item These two joint pmfs are equal, which implies strict stationarity.          
+\end{itemize}
+\item \textbf{Fact} \textit{Ergodic theorem.} When the MC is irreducible then for any initial distribution $\lambda$, the sample (or empirical) average converges to $\sum_{i\in S}\pi_i r(i)$.
+\[
+\underbrace{\frac{1}{n+1}\sum_{k=0}^n r(X_k)}_\text{Empirical Mean} \rightarrow \sum_{i \in S} \pi_i r(i).
+\]
+\begin{itemize}
+    \item Definition:
+    \begin{itemize}
+    \item An irreducible Markov chain refers to a chain where all state values in S \underline{communicate} with each other.
+    \item This means for any pair of states $(i,j)$, the Markov chain starting in $i$ will eventually visit $j$ and vice versa.
+    \item We can identify communicating states by inspecting the elements of the transition probability matrix
+    \end{itemize}
+    \item Example:
+    \begin{itemize}
+        \item The communicating sets of states for a MC with transition probability matrix 
+        \[
+        Q = \begin{bmatrix}
+        \frac{1}{2} & \frac{1}{2} & 0 & 0 & 0 & 0 \\
+        0 & 0 & 1 & 0 & 0 & 0 \\
+        \frac{1}{3} & 0 & 0 & \frac{1}{3} & \frac{1}{3} & 0 \\
+        0 & 0 & 0 & \frac{1}{2} & \frac{1}{2} & 0 \\
+        0 & 0 & 0 & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 & 1 & 0 \\
+        \end{bmatrix}
+        \]
+        is $\{1,2,3 \}$, $\{ 4\}$ and $\{5,6\}$. So this chain is not irreducible and the Ergodic theorem does not hold.
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\linewidth]{L6/Irre.png}
+        \end{figure}
+        \item The dashed lines (arrows) indicate possible transition between states. 
+        \item The dashed loops indicate self-transitions.
+        \item Each arrow should carry a weight equal to the probability of moving between the corresponding states.
+    \end{itemize}
+    
+\end{itemize}
+
+
+\end{enumerate}
+\section{Time-series Analysis}
+\subsection{Definition of a time series}
+A \textbf{time series} is a set of observations $y_n$, $n=0,1,..., $ arranged in increasing time. 
+\begin{itemize}
+    \item Typically observations are recorded at regular real-time intervals, e.g. $t_0 + n\Delta$ where $t_0$ is start time for recording observations and $\Delta $ is the time-increment between observations.
+    \item The $n$th observation is recorded at real-time $t_0 + n\Delta$
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{L7/CO2.png}
+    \caption{A time-series $\{y_0, y_1,...\ \}$, the $CO_2$ data. Time interval between observations $\Delta = 1$ month.}
+\end{figure}
+\subsection{Workflow for time-series analysis}
+When faced with a novel time-series data $y_0,y_1,...$
+\begin{itemize}
+    \item \textbf{\textcolor{blue1}{Step 1}}: Set up a probability model to represent the data. 
+    \[
+    Y_n = \textrm{trend} + \textrm{seasonal component} + \textrm{residual}
+    \]
+    where 
+    \begin{center}
+        Trend $m_n$: evolution of mean over time 
+        
+        Seasonal $S_n$: sinusoid(s) with periodicity related to the calendar
+        
+        Residual $X_n$: zero-mean random variable (not just independent over time)
+    \end{center}
+    \item \textbf{\textcolor{blue1}{Step 2}}: Estimate model parameters and check goodness of fit
+    \item \textbf{\textcolor{blue1}{Step 3}}: Deploy: Simulate, forecasting,...
+\end{itemize}
+
+\subsection{Estimating, or fitting, the trend}
+\begin{itemize}
+\item Estimating the trend
+\begin{itemize}
+    \item Assume $Y_n = m_n + S_n + X_n$ where the trend is assumed to be polynomial 
+    \[
+    m_n = a + b n + c n^2
+    \]
+    \item Using the data $y_0,...,y_n$ estimate $(a,b,c)$ via least squares:
+    \[
+    \left(\dydx{}{a}, \dydx{}{b}, \dydx{}{c} \right) \summ{n=0}{N}(Y_n - a -bn -c n^2)^2 = (0,0,0)
+    \]
+    \item De-trended data is 
+    \[
+    Y_n - \hat{m}_n = Y_n - \hat{a} - \hat{b}_n -\hat{c}n^2
+    \]
+\end{itemize}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{L7/Fit.png}
+    \caption{Different fits for the data}
+    \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{L7/Res.png}
+    \caption{De-trended data $Y_n - \hat{m}_n$ }
+\end{figure}
+\item Biased 
+\begin{itemize}
+\item Getting the trend model wrong will result in a biased estimate. Assume $Y_n = a + bn +X_n$ where $\mexpval{X_n} = 0$ but we fit a constant trend $Y_n = m + X_n$. Then 
+\[
+\hat{m} = \frac{1}{N+1}\summ{n=0}{N} Y_n = a + \frac{N}{2}b +\frac{1}{N+1} \summ{n=0}{N}X_n
+\]
+which is biased since $\mexpval{\hat{m}}$ = a + b N/2
+\item Example:
+Assume $Y_n = a + b_n +X_n$ where $\mexpval{X_n} = 0.$ Estimate the trend with the moving average where $\hat{m}_n = (Y_{n-1} + Y_n + Y_{n+1})/3$ and find $\mexpval{\hat{m}_n}$.
+\begin{align*}
+    \hat{m}_n &= a + b(n-1 + n + n + 1)/3 + (X_{n-1} + X_n + X_{n+1})/3 \\
+    & = a + bn + (X_{n-1} + X_n + X_{n+1})/3
+\end{align*}
+which is unbiased. But verify this estimate is biased if the true data was $Y_n = a + bn + cn^2 + X_n$.
+
+\end{itemize}
+\item Fitting the seasonal term:
+\begin{itemize}
+    \item Assume $S_n = A\cos(2\pi fn + \phi)$ where $A$ and $\phi$ are independent random variable, $0\le \phi < 2\pi$ is uniformly distributed. Note 
+    \[
+    S_n = \alpha_1\cos(2\pi fn) + \alpha_2\sin(2\pi fn)
+    \]
+    where $\alpha_1 = A\cos(\phi)$ and $\alpha_2 = -A\sin(\phi)$
+    \item Solve with least squares similarly
+    \item Then, left with residuals:
+    \[
+    Y_n - \hat{m}_n - \hat{S}_n = Y_n - \hat{m}_n - \hat{\alpha}_1\cos(2\pi fn) - \hat{\alpha}_2\sin(2\pi fn)
+    \]
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{L7/Fit_Sinu.png}
+    \caption{Fitted sinusoid}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{L7/Combined_Fit.png}
+    \caption{Combined Fit}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{L7/Residual.png}
+    \caption{Final Residual}
+    \end{figure}
+    
+\end{itemize}
+\item Fitting the residual
+\begin{itemize}
+    \item Plotting residuals $Y_n -\hat{m}_n - \hat{S}_n $, its autocorrelation, the histograms of residuals.
+    \item Each row is a scenario you could face:
+    \begin{itemize}
+        \item Top row: independent zero mean residuals
+        \item Middle row: correlated zero mean residuals
+        \item Bottom row: strongly correlated zero mean residuals
+    \end{itemize}
+    \item Note that all residuals have the same histograms ($\mathcal{N}(0,1)$)
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{L7/Residual_plotting.png}
+    \end{figure}
+\end{itemize}
+
+\section{AR and MA process}
+\subsection{Auto-regressive (AR) process}
+\subsubsection{Definition}
+\begin{itemize}
+    \item Let \arproc{W} be a sequence of random variables such that $\mexpval{W_n} = 0$ for all $n$, 
+\[
+\mexpval{W_i W_j} = \left\{\begin{array}{cc}
+   \sigd  & \textrm{ for } i=j \\
+   0  & \textrm{ for } i \not =j
+\end{array} \right.
+\]
+\item The AR($p$) process \arproc{X} is 
+\[
+X_n = \left( \summ{i=1}{p} a_i X_{n-1}\right) + W_n
+\]
+where $a_1,...,a_p$ are constants and $p$ is the order of the process.
+
+\item A real time-series (data set) $X_n$ is modelled as a function of its previous values and random part:
+\[
+X_n = \underbrace{a_1X_{n-1} +...+a_p X_{n-p}}_{\textrm{predictable part}} + \underbrace{W_n}_{\textrm{random part}} 
+\]
+\begin{figure}[H]
+    \centering
+    \includegraphics{L8/Compare_AR.png}
+\end{figure}
+\item Comparing AR(1) and AR(2), AR(2) is more ``sluggish'' or is more influenced by its past values.
+\end{itemize}
+\subsubsection{AR(1) process}
+\begin{itemize}
+    \item For the AR(1), we write
+    \[
+    X_n = a X_{n-1} + W_n
+    \]
+    i.e. Only take into account one term before
+    \item Expand $X_n$ in terms of $W_k$, $k \le n$ and compute the mean and variance:
+    \begin{align*}
+        X_n & = a X_{n-1} + W_n\\
+        & = a^2 X_{n-2} + a W_{n-1} + W_n\\
+        & \vdots \\
+        & = \summ{k=0}{\infty}W_{n-k}a^k \\
+        X_n & = \summ{k=0}{\infty}W_{n-k}h_k
+    \end{align*}
+    \item AR(1) is causal with impulse response $\{h_k \}_{k\ge 0}$.
+    \item No future $W_j$, $j > n$, terms in $X_n$.
+    \item Using linearity of $\mexp\{\cdot\}$ to get mean,
+    \[
+    \mexp\{X_n\}E\left\{ \summ{k=0}{\infty}W_{n-k}a^k\right\}=\summ{k=0}{\infty}\{ W_{n-k}a^k\} = 0
+    \]
+    since each $W_n$ has mean zero.
+    \item For the variance 
+    \begin{align*}
+        \mexp\{X_n^2\} &=\mexp \left\{\left(\sumkzeroinf W_{n-k}a^k  \right)^2 \right\} \\
+         &=\mexp \left\{\left(\sumkzeroinf W_{n-k}^2a^{2k}  \right) + \textrm{cross terms}\right\} \\
+        & =_{(a)} \sumkzeroinf \mexp\{W_{n-k}^2\} a^{2k} \\
+        & = \sumkzeroinf \sigd a^{2k} =_{(b)} \frac{\sigd}{1-a^2}
+    \end{align*}
+    \begin{enumerate}[label=(\alph*)]
+        \item Since $\mexpval{W_i W_j} = 0$ for $i\not = j$ so cross terms have zero mean.
+        \item Geometric sum converges provided $|a|<1$.
+    \end{enumerate}
+\end{itemize}
+\subsection{Wide sense stationary (WSS)}
+\subsubsection{Definition}
+    \arproc{X} is wide-sense stationary if 
+    \begin{itemize}
+    \item $\mexpproc{X_n} = \mu$ for all $n$ i.e.,$X_n$ has constant mean;
+    \item has finite variance, i.e., $\mexpproc{X_n^2} < \infty$ for all $n$;
+    \item $\mexpproc{X_{n1}X_{n2}} = \mexpproc{X_{n1+k}X_{n2+k}}$ for any $n_1,n_2,k$.
+    \end{itemize}
+\subsubsection{Correlation function}
+\[
+R_X(k) = \mexpproc{X_0X_k}, \quad k \in \mathbb{Z}
+\]
+\begin{itemize}
+    \item $R_X(k)$ is the \textbf{correlation function} of a WSS process.
+    \item For any $n_2 > n_1$,
+    \[
+    \mexpproc{X_{n_1}X_{n_2}} = \mexpproc{X_{n_1 - n_1}X_{n_2-n_1}} = R_X(n_2-n_1)
+    \]
+    \item We see that $\mexpproc{X_{n_1}X_{n_2}}$ only depends on $|n_2 -n_1|$.
+    \item $R_X(k)$ is an even function.
+    \item Strict stationarity is too strong a requirement to be relevant for many application. Recall it implies any two sections of the process,
+    \[
+    (X_0,...,X_k) and (X_m,...,X_{k+m})
+    \]
+    are statistically indistinguishable for any section size $k$ and displacement $m$. This is an inappropriate model for many real-world processes.
+    \item Wide sense stationarity is a weaker modelling restriction and useful for the analysis of time-series.
+    
+\end{itemize}
+\subsubsection{Example: Random phase cosine}
+Let $X_n=\cos(2\pi fn + \phi)$,we showed earlier $\mexpproc{X_n} = 0$. Show $\mexpproc{X_{n_1}X_{n_2}}$ only depends on the time difference.
+
+\begin{align*}
+    \mexpproc{X_{n_1}X_{n_2}} &= \intpi \cos(2\pi fn_1 + \phi)\cos(2\pi fn_2 + \phi) \frac{1}{2\pi}\, d\phi \\
+    &= \intpi \frac{1}{2}\cos(2\phi + 2\pi f(n_1+n_2))\frac{1}{2\pi}\, d\phi + \intpi \frac{1}{2}\cos(2\pi f(n_1-n_2))\frac{1}{2\pi}\, d\phi\\
+    &= \frac{1}{2}\cos(2\pi f \underbrace{(n_2 - n_1)}_{\textrm{only difference}})
+\end{align*}
+\begin{itemize}
+    \item For random phase example, $\mexpproc{X_{n_1}X_{n_2}}$ only depends on the time difference.
+    \item Note that $R_X(k) = \mexpproc{X_0X_k}$ is periodic and does not decay. (The period is the same as the data.)
+    \item So $X_n$ and $X_{n+k}$ remain strongly correlated even as k increases.
+\end{itemize}
+\subsubsection{Example: AR(1) process.}
+
+We showed earlier that $\mexpproc{X_n}=0$ and $\mexpproc{X_n^2} = \frac{\sigd}{(1-a^2)}$ for all n.
+
+Calculate $\mexpproc{X_{n-k}X_n}$ for $k\ge 1$ for AR(1): $X_n = a X_{n-1} + W_n , |a|<1$.
+\begin{itemize}
+\item 
+\begin{align*}
+    \mexpproc{X_{n-1}X_n} &= \mexpproc{X_{n-1}(a X_{n-1}+W_n)}\\
+    & = a \mexpproc{X^2_{n-1}} + \underbrace{\mexpproc{X_{n-1}W_{n}} }_{=0}\\
+    & = a \sigd_X
+\end{align*}
+\begin{itemize}
+    \item Note $\mexpproc{X_{n-1}W_{n}} =0$ as no $W_n$ term in $X_{n-1}$.
+\end{itemize}
+\item \[
+\mexpproc{X_{n-2}X_n} = a\mexpproc{X_{n-2}X_{n-1}} + \underbrace{\mexpproc{X_{n-2}W_{n}} }_{=0} = a^2\sigd_X
+\]
+\item \[
+\mexpproc{X_{n-3}X_n} = a\mexpproc{X_{n-3}X_{n-1}} + \underbrace{\mexpproc{X_{n-3}W_{n}} }_{=0} = a^3\sigd_X
+\]
+\item Therefore, $\mexpproc{X_{n-k}X_n}$ does not depend on $n$. Thus the AR(1) process is WSS and 
+\[
+R_X(k) = a^k \sigd_X
+\]
+\end{itemize}
+
+\subsubsection{More on AR process}
+\begin{itemize}
+    \item The AR($p$) process is a useful model for time-series data:
+    \[
+    X_n = \underbrace{a_1 X_{n-1} + ... + a_p X_{n-p}}_{\textrm{predictable part}} + \underline{W_n}_{\textrm{random part}}
+    \]
+    \item The AR($p$) process is wide sense stationary.
+    \item It is easy to estimate the best fitting AR($p$) model for a real time-series data set using its WSS property.
+\end{itemize}
+
+\subsection{Moving average MA($q$) process.}
+\subsubsection{Definition}
+\begin{itemize}
+\item Let \arproc{W} be a sequence of random variables such that $\mexpval{W_n} = 0$ for all $n$, 
+\[
+\mexpval{W_i W_j} = \left\{\begin{array}{cc}
+   \sigd  & \textrm{ for } i=j \\
+   0  & \textrm{ for } i \not =j
+\end{array} \right.
+\]
+\item The MA($q$) process \arproc{X} is
+\[
+X_n = \left( \summ{i=1}{q}b_i W_{n-i} + W_n\right)
+\]
+where $b_1,...,b_q$ are constants and $q$ is the \textit{order} of the process
+\end{itemize}
+\subsubsection{Correlation of the MA($q$) process}
+\begin{itemize}
+    \item Since \arproc{W} satisfies $\mexpproc{W_n W_k}=0$ when $n \not = k$
+    \begin{align*}
+        \mexp\{ X^2_n\} &= \mexp\left\{ \left(W_n + \summ{i=1}{q}b_i W_{n-i} \right)^2 \right\}\\
+        & = \summ{i=1}{q}b_i^2 \mexpproc{W_{n-1}^2} + \mexpproc{W^2_n} + \mexpproc{\textrm{cross term}}\\
+        & = \sigd (1 + b_1^2 + ... + b_q^2).
+    \end{align*}
+    \item We may write 
+    \[
+    X_n = \summ{i=0}{\infty}h_i W_{n-i}
+    \]
+    $h_i = b_i$ for $0<i\le q$, $h_0 = 1$ and $h_i=0$ for all other $i$
+    \[
+    h_i = \left\{ \begin{array}{ll}
+        b_i & \textrm{ if } 0<i\le q  \\
+        1 & \textrm{ if } i = 0 \\
+        0 & \textrm{ otherwise }
+    \end{array}\right.
+    \]
+    \item Thus to compute $\mexpproc{X_{n_1}X_{n_2}}$, we need to compute the correlation of the output of an LTI system with impulse response \arprock{h}
+\end{itemize}
+\subsubsection{Wide sense stationarity}
+\begin{itemize}
+    \item \textbf{Fact:} If the input \arproc{W} of a discrete time LTI system with impulse response \arproc{h} is WSS then its output \arproc{y} is also WSS.
+    \item \textbf{Verification:}
+    \begin{itemize}
+        \item Output is found by convolution: $Y_n = \summ{k=-\infty}{\infty}h_{n-k}W_k$. 
+        \item The mean of $Y_n$ is then:
+        \begin{align*}
+          \mexpproc{Y_n} & =  \summ{k=-\infty}{\infty}h_{n-k}\mexpproc{W_k} & \textrm{(linearity of expectation)} \\
+          & = \mexpproc{W_0} \summ{k=-\infty}{\infty}h_{n-k} & \textrm{(constant mean property)}
+        \end{align*}
+        \item and thus $\mexpproc{Y_n}$ is time independent. 
+        \item The correlation is 
+        \begin{align*}
+            \mexpproc{Y_{n_1}Y_{n_2}} & = \mexp\left\{ \left(\summ{k=-\infty}{\infty}h_k  W_{n_1-k} \right) \left(\summ{l=-\infty}{\infty}h_l  W_{n_1-l} \right) \right\} \\
+            &= \mexp\left\{ \summ{l=-\infty}{\infty}\summ{k=-\infty}{\infty} h_k h_l  W_{n_1-k} W_{n_1-l}  \right\} \\
+            & = \summ{l=-\infty}{\infty}\summ{k=-\infty}{\infty}h_k h_l\mexp\{ W_{n_1-k} W_{n_1-l}\}     \\
+            & = \summ{l=-\infty}{\infty}\summ{k=-\infty}{\infty}h_k h_l R_W(n_2-n_1+k-l)
+        \end{align*}
+        \item Which is indeed only a function of $n_2 -n_1$ Thus $\{ Y_n\}_{n\in \mathbb{Z}}$ is also WSS.
+        \item Back to the MA example, $\{ W_n\}_{n\in \mathbb{Z}}$ is WSS since $\mexpproc{W_n}=0, \mexpproc{W_n W_k} =0$ for $n\bot = k$. Thus the MA process is WSS.
+    \end{itemize}
+\end{itemize}
+\section{Power Spectrum}
+\textbf{Overview:}
+\begin{itemize}
+    \item The \textit{Fourier transform} is an important tool for analysing deterministic signals and is equally important for random process as well.
+    \item A \textit{frequency domain} representation is obtained by computing the Fourier transform of the correlation function to yield the \textit{Power spectrum}.
+    \item As we will see, it is called the power spectrum because it gives the power of the random process at each frequency of the spectrum.
+\end{itemize}
+\subsection{Definition}
+Let $R_X(k)$ be the correlation function of a \textbf{discrete time} WSS process. 
+\begin{itemize}
+    \item The power spectrum density $S_X(f)$ is 
+\[
+S_X(f) =\sumkinfinf \corr \focoef{k}
+\]
+\item The inversion formula:
+\[
+\correlation{n} = \inthalf \psd \focoefinv{n} \, df.
+\]
+\item Note that $\psd = S_X(f+n)$, $n$ is integer. $S_X$ has period 1.
+\item $\psd$ is an even function
+\end{itemize}
+\subsection{Using the inversion as an interpretation}
+\begin{itemize}
+    \item We will show (by symmetry)
+    \begin{align*}
+        \correlation{n} &= 2 \intzerohalf \psd \cos(j2\pi f n )\, df \\
+        & \approx \summ{i=1}{k}\frac{1}{K}S_X(f_i) \cos(j2\pi f_i n )
+    \end{align*}
+    By dividing $[0,\frac{1}{2}]$ into $K$ equal size segments, $f_i$ is the mid-point of segment $i$.
+    \item We can use a sum of cosines with random phases to find a WSS random process with the same $\correlation{n}$:
+    \[
+    X_n = \summ{i=1}{k}\sqrt{2S_X(f_i)/K}\cos(2\pi f_i n + \phi_i)
+    \]
+    where $\phi_i \sim \mathcal{U}[0, 2\pi]$, each $\phi_i$ independent.
+    
+\end{itemize}
+\begin{tabular}{ll}
+\includegraphics[width = 0.49\linewidth]{L9/20.png}
+&\includegraphics[width = 0.5\linewidth]{L9/1000.png} \\
+(a) $K=20$ Cosine approximation & (b) $K=1000$ Cosine approximation
+\end{tabular}
+
+\subsection{Example: PSD of AR(1) process.}
+\begin{itemize}
+    \item The AR(1) process:
+\[
+X_n = aX_{n-1} + w_n, \quad |a| < 1
+\]
+\[
+\mexpproc{X_n} = 0, \quad \mexpproc{X_n^2}=\sigd_X = \frac{\sigd}{1-a^2}, \quad \correlation{k}=a^{|k|}\sigd_X
+\]
+\item PSD :
+\begin{align*}
+    \psd & = \sigd_X \sumkinfinf a^{|k|}\focoef{k}\\
+    & = -\sigd_X + \sigd_X \sum_{k=-\infty}^0 a^{-k}\focoef{k} + \sigd_X \sum_{k=0}^\infty a^{k}\focoef{k} \\
+    & = \sigd_X \left(-1 + \frac{1}{1-a\focoefinv{}} + \frac{1}{1-a\focoef{}} \right)  \\
+    & = \frac{\sigd}{(1-a\focoefinv{})(1-a\focoef{})} \\
+    & = \frac{\sigd}{1 + a^2 - 2a\cos(2\pi f)}
+\end{align*}
+\begin{figure}[H]
+    \centering
+    \includegraphics{L9/PSD_AR.png}
+    \caption{Power spectrum of the AR(1) process}.
+\end{figure}
+\end{itemize}
+\subsection{Property of WSS PSD}
+\begin{itemize}
+    \item \textbf{Fact}: If $R_X(k)$ is the correlation function of a discrete time WSS process then the power spectrum density $\psd$ is an \underline{even, real valued and nonnegative} function of f. Moreover, $\psd$ is a continuous function if $\sumkinfinf |\correlation{k}| < \infty$.
+    \item \textit{Verification}: Use the definition of the PSD
+\begin{align*}
+    \psd = & \sumkinfinf R_X(k)\focoef{k} \\
+    = & \sumkinfinf R_X(k)\cos(2\pi f k) - j \ \sumkinfinf R_X(k)\sin(2\pi f k) \\
+    = & \sumkinfinf R_X(k) \cos(2\pi k f)
+\end{align*}
+\item NO sine terms as $R_X(k)$ is even and $\sin(2\pi f k)$ is odd, and summing from negative to positive cancel out this whole odd function. Thus $\psd$ is even.
+\[
+\psd = S_X(-f) \quad \textrm{and} \quad \psd = S_X^*(f).
+\]
+\item Continuity follows as the weighted sum of continuous functions (note $\cos(2\pi f t)$ is continuous) is continuous.
+\end{itemize}
+
+\subsection{PSD of an LTI system}
+\begin{figure}[H]
+    \centering
+    \includegraphics{L9/LTI.png}
+\end{figure}
+\begin{itemize}
+    \item If the input \arproc{W} if a LTI system with impulse response \arproc{h} is WSS then its output \arproc{Y} is also WSS.
+    \item Relating PSD of input and output:
+    \[
+    \psdval{Y} = \psdval{W}|H(f)|^2.
+    \]
+    \item \textit{Verification}:
+    \begin{itemize}
+        \item
+    \[
+    R_Y(n) = \mexpproc{Y_0Y_n} = \sumkinfinf h_k \left(\summ{l=-\infty}{\infty}h_l R_W(n+k-l)\right)
+    \]
+    \item Inner sum is the convolution of $R_W$ and the impulse response:
+    \[
+    \summ{l=-\infty}{\infty}h_l R_W(n+k-l) = g(n+k)
+    \]
+    
+    \item Thus:
+    \[
+    R_Y(n) = \sumkinfinf h_kg(n+k) = \sumkinfinf h_{-k}g(n-k)
+    \]
+    \item The Fourier transform is 
+    \[
+    \psdval{Y} = H^*(f)G(f)
+    \]
+    where 
+    \[
+    \psdval{Y} = \sumninfinf R_Y(n)\focoef{n}, \quad H(f) = \sumninfinf h(n)\focoef{n}, \quad G(f) = \sumninfinf g(n)\focoef{n}
+    \]
+    \item Thus 
+    \[
+    \psdval{Y} = H^*(f)G(f) = H^*(f) S_W(f)H(f) = S_W(f)|H(f)|^2
+    \]
+    \end{itemize}
+    \item Example:For the AR model $X_n = a X_{n-1}+W_n$, compute the PSD using the Fourier method.
+    \begin{itemize}
+        \item AR(1) model can be written as :
+        \[
+        X_n = \sumkzeroinf W_{n-k} a^k = \sumkzeroinf W_{n-k} h_k .
+        \]
+        \item  $S_X(f) = S_W(f)|H(f)|^2$ where 
+        \[
+        S_W(f) = \sumkinfinf R_W(k)\focoef{k}  = \sigd
+        \]
+        Since $R_W(k) = 0$ for $k\not = 0 $ and $R_W(0)=\mexpproc{W_n^2} =\sigd$
+        \item Then
+        \begin{align*}
+            H_X(f) = & \sumkinfinf h_k \focoef{k} \\
+             = & \sumkzeroinf a^k \focoef{k} \\
+             = & \left( \frac{1}{1 - a\focoef{}} \right) \\
+            |H_X(f)|^2 = & \frac{1}{(1-a\focoef{})(1-a\focoefinv{})} 
+        \end{align*}
+        \item Finally, using $S_X(f) = S_W(f)|H(f)|^2 = \sigd |H(f)|^2$ we get the same answer as before.
+
+    \end{itemize}
+\end{itemize}
+\subsection{The ARMA model}
+\subsubsection{Definition}
+\begin{itemize}
+    \item Let \arproc{W} be a sequence of random variables with common mean 0 common variance $\sigd$ and $\mexpproc{W_nW_k}=0$ for $n\not = k$.
+    \item The ARMA($p,q$) process \arproc{X} is the discrete time process satisfying 
+    \[
+    X_n = \summ{i=1}{p}a_i X_{n-i} + W_n + \summ{i=1}{q}b_i W_{n-i}
+    \]
+    where $a_i$ and $b_j$ are constants.
+    \item It can be expressed as a causal filter applied to \arproc{W},
+    \[
+    X_n = \sumkzeroinf h_k W_{n-k}.
+    \]
+    \item \textbf{Fact}: The ARMA($p,q$) is WSS.
+    \item Verification of WSS:
+    \begin{itemize}
+    \item The \arma model can be interpreted as an LTI system with input \arproc{W}.
+    \item Use the previous result that showed an LTI system preserves the WSS property.
+    \item Since $\mexpproc{W_n}=0$ and $\mexpproc{W_n W_m} = 0$ for $m\not = n$ which implies WSS of \arproc{W}, therefore \arma is also WSS.
+    \end{itemize}
+\end{itemize}
+
+\section{Random Process revisit }
+\subsection{Discrete-time Random Process}
+\subsubsection{Definition}
+\begin{itemize}
+    \item A discrete random process is defined as an ensemble of functions 
+    \[
+    \{ \randpr{w}\}, \quad n=-\infty,...,-1,0,1,...,\infty
+    \]
+    \item $w$ is a random variable having a probability density function $f(w)$.
+    \item Think of a \textcolor{blue1}{generative} model for the waveforms you might observe in practice:
+    \begin{enumerate}
+        \item First draw a random value $\wtil$ from the density $f(w)$
+        \item The observed waveform for this value $w = \wtil$ is given by 
+        \[
+        \randpr{\wtil}, \quad n = -\infty,...,-1,0,1,...,\infty
+        \]
+        \item the `ensemble' is built up by considering all possible values $\wtil$ (`the sample space') and their corresponding time waveforms $X_n(\wtil)$
+        \item $f(w)$ determines the relative frequency (or probability) with which each waveform $X_n(w)$ can occur.
+        \item Where no ambiguity can occur, $w$ is left out for notational simplicity, i.e. we refer to `random process $\{ X_n\}$ 
+    \end{enumerate}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Part2.1/Rand_Proc.png}
+        \caption{Ensemble representation of a discrete-time random process}
+        \label{fig:ensemble_Rand}
+    \end{figure}
+\end{itemize}
+\subsubsection{Example: the harmonic process}
+The harmonic process is important in a number of applications including radar, sonar, speech and audio modelling. An example of a real-valued harmonic process is the random phase sinusoid.
+\begin{itemize}
+    \item Sine-waves of known amplitude $a$ and frequency $w_0$.
+    \item Phase, unknown and random 
+    \item Random phase correspond to an unknown delay in a system for example.
+    \item This random process could be expressed in:
+    \[
+    X_n = a \sin(n w_0 + \Phi) \qquad \textrm{with fixed constant $a$ and $w_0$ and random variable $\Phi$} 
+    \]
+    \item Random variable $\Phi$ has a uniform probability distribution over the range $-\pi$ to $+\pi$:
+    \[
+    f(\phi) =\left \{\begin{array}{ll}
+    
+        1/(2\pi) & -\pi < \phi < +\pi  \\
+        0, & \textrm{otherwise} \\
+        
+    \end{array}\right.
+    \]
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Part2.1/harmonic.png}
+    \caption{Some members of the random phase sine ensemble}
+\end{figure}
+\subsection{Correlation functions }
+\subsubsection{Autocorrelation function}
+\begin{itemize}
+    \item The mean of a random process ${X_n}$ is - $\mexpproc{X_n}$ 
+    \item The \textbf{Autocorrelation function} of process $\proc{X}$ is 
+    \[
+    \autocox[n,m] = \mexp[X_nX_m]
+    \]
+\end{itemize}
+\subsubsection{Cross-Correlation function}
+\begin{itemize}
+    \item The \textbf{Cross-correlation} function between two processes $\proc{X}$ and $\proc{Y}$ is:
+    \[
+    \crosscoxy[n,m] = \mexp[X_n Y_m]
+    \]
+\end{itemize}
+\subsection{Stationarity}
+\subsubsection{Strict-Sense Stationary}
+\begin{itemize}
+    \item A stationary process has the \textit{same statistical characteristics} \textcolor{blue1}{irrespective of shifts along the time axis}.
+    \begin{itemize}
+        \item An observer looking at the process from sampling time $n_1$ would not be able to tell the difference in the \textit{\textcolor{blue1}{statistical}} characteristics of the process if the time moved to $n_2$
+        \item Could be formalised by considering the $N$th order density function for the process:
+        \[
+        f_{X_{n_1},X_{n_2},...,X_{n_N}}(x_{n_1},x_{n_2},...,x_{n_N})
+        \]
+        i.e., the joint probability density function for $N$ arbitrarily chosen time indices $\{n_1,n_2,...,n_N\}$.
+        \item Since the probability distribution of a random vector contains all the statistical information about that random vector, we should expect the probability distribution to be unchanged if we shifted the time axis any amount to the left or the right, for a stationary signal 
+    \end{itemize}
+    \item A random process is strict-sense stationary if, for any finite $c, N$ and $\{ n_1,n_2,...,n_N\}$:
+    \[
+     f_{X_{n_1},X_{n_2},...,X_{n_N}}(\alpha_1,...,\alpha_N) = f_{X_{n_1+c},X_{n_2+c},...,X_{n_N+c}}(\alpha_1,...,\alpha_N)
+    \]
+    \item Strict-sense stationarity is hard to prove for most systems. In this course, a less stringent condition is used, wide-sense stationarity, which only requires \empha{first and second moments}(i.e. mean and autocorrelation function) to be invariant to time shifts.
+\end{itemize}
+\subsubsection{Wide-sense Stationary}
+A random process is \titc{wide-sense stationary(WSS)} if:
+\begin{enumerate}
+    \item $\mu_n = \mexp[X_n]=\mu$ (Constant mean)
+    \item $\autocox[n,m] = \autocox[n+k,m+k]$ (Autocorrelation only depends on the difference)
+    \item Finite variance: $\mexp[(X_n - \mu)^2] < \infty$
+\end{enumerate}
+Note that strict-sense stationarity plus finite variance implies wide-sense stationarity, but not vice versa.
+
+\subsubsection{Example: the harmonic process continued }
+\begin{enumerate}
+    \item Mean:
+    \begin{align*}
+        \mexp[X_n] = & \mexp[a\sin(n w_0 + \Phi)] \\
+        = & a \{\mexp[\sin(n w_0)\cos(\Phi) + \cos(n w_0)\sin(\Phi)]\} \\
+        = & a \{ \sin(n w_0) \mexp[cos(\Phi)] + \cos(n w_0) \mexp[\sin(\Phi)] \} \\
+        = & 0
+    \end{align*}
+    since $\mexp[\cos(\Phi)] = \mexp[\sin(\Phi)] =0 $ under the assumed uniform pdf $f(\phi)$.
+    \item Autocorrelation:
+    \begin{align*}
+        r_{XX}[n,m] = & E[X_n X_m] \\
+        = & \mexp[a\sin(n w_0 + \Phi)\cdot a\sin(m w_0 + \Phi)] \\
+        = & 0.5a^2\{\mexp[\cos[(n-m)w_0]-\cos[(n+m)w_0 + 2\Phi]]\} \\
+        = & 0.5a^2 \{\cos[(n-m)w_0]-\mexp[\cos[n+m]w_0+2\Phi]\} \\
+        = 0.5 a^2 \cos[(n-m)w_0]
+    \end{align*}
+    \item To verify finite variance, just set $m=n$ in the autocorrelation function. Therefore, the harmonic process satisfy all three conditions and is WSS.
+\end{enumerate}
+
+\subsection{Power Spectra}
+\subsubsection{Definition}
+\begin{itemize}
+
+\item For a wide-sense stationary random process $\proc{X}$, the power spectrum is defined as the discrete-time Fourier transform (DTFT) of the autocorrelation function:
+\[
+\ps(e^{j\Omega}) = \summinfinf \autocox[m]e^{-jm\Omega}
+\]
+where $\Omega = \omega T$, the normalised frequency, in radians per sample is used for convenience.
+    \item $T$ is the sampling interval of the discrete time process and therefore $\Omega  = 2\pi$ corresponds to the sampling frequency $\omega = 2\pi / T$ rad/s
+    \item The definition here is slightly different compared to the before. When we write the PSD in a function of $e^{j\Omega}$. The period becomes $2\pi$
+\end{itemize}
+\subsubsection{Inverse formula for PSD}
+\begin{itemize}
+    \item The autocorrelation function can thus be found from the power spectrum by inverting the transform using the inverse DTFT:
+    \[
+    \autocox[m] = \frac{1}{2\pi} \intpipi \ps(e^{j\Omega})e^{jm\Omega} \, d\Omega
+    \]
+\end{itemize}
+\subsubsection{Properties}
+\begin{itemize}
+    \item The \titc{power spectrum} is a \empha{real, positive, even} and \empha{periodic} function of frequency.
+    \item The power spectrum can be interpreted as a density spectrum in the sense that the mean-squared signal value at the output of an ideal band-pass filter with lower and upper cut-off frequencies $\omega_l$ and $\omega_u$ is given by
+    \[
+    \frac{1}{\pi}\int_{\omega_l T}^{\omega_u T} \ps(e^{j\Omega}) \, d\Omega
+    \]
+    
+\end{itemize}
+\subsubsection{Example: random phase sine-wave}
+\begin{itemize}
+    \item The autocorrelation function is obtained as:
+    \[
+    \autocox[m] = 0.5a^2\cos[m\omega_o]
+    \]
+    \item Hence the power spectrum is obtained as:
+    \begin{align*}
+        \ps(e^{j\Omega}) = & \summinfinf \autocox[m]e^{-jm\Omega} \\
+        = & \summinfinf 0.5a^2\cos[m\omega_0] e^{-jm\Omega} \\
+        = & 0.25a^2 \times \summinfinf (e^{jm\omega_0} + e^{-jm\omega_0})e^{-jm\Omega} \\
+        = & 0.5\pi a^2 \times \summinfinf \delta(\Omega - \omega_0 -2m\pi) + \delta(\Omega + \omega_0 -2m\pi)
+    \end{align*}
+    where Normalised frequency $\Omega = \omega T$ is used for shorthand
+    \item The last line above is obtained from the Fourier series of a periodic train of $\delta $ functions 
+    \[
+    \summinfinf \delta(t + t_0 - 2m\pi) = \frac{1}{2\pi} \summinfinf \exp(-jmt_0)\exp(+jmt)
+    \]
+    \item Alternatively (and equivalently) just take the inverse DTFT of the delta function to check the result:
+    \[
+    \frac{1}{2\pi} \intpipi \delta(\Omega + \omega_0 -2m\pi)e^{jn\Omega} \, d\Omega = \frac{1}{2\pi} e^{jn\omega_0}
+    \]
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width= 0.5\linewidth]{Part2.1/psd_harmonic.png}
+        \caption{Power spectrum of harmonic process - $\Omega_0 = \omega_0$ in this plot}
+    \end{figure}
+\end{itemize}
+\subsection{White Noise}
+\subsubsection{Definition}
+\begin{itemize}
+    \item White noise is defined in terms of its auto-covariance function. A wide sense stationary process is termed white noise if: 
+    \[
+    \autocox[m] = \mexp[(X_n -\mu)(X_{n+m}-\mu)] = \sigd_X \delta[m]
+    \]
+    where $\delta[m]$ is the discrete impulse function:
+    \[
+    \delta[m] = \left \{ \begin{array}{ll}
+        1, & m=0  \\
+        0, & \textrm{otherwise}
+    \end{array}\right.
+    \]
+    $\sigd_X = \mexp[(X_n - \mu)^2]$ is the variance of the process. 
+    \item If $\mu= 0$ then $\sigd_X$ is the \titc{mean-squared} value of the process, which will refer to as the `power'.
+    \item The power spectrum of zero mean white noise is:
+    \[
+    \ps(e^{j\omega T}) = \summinfinf \autocox[m] e^{-jm\Omega} = \sigd_X
+    \]
+    i.e., flat across all frequencies. 
+\end{itemize}
+\subsubsection{Example: White Gaussian noise (WGN)}
+\begin{itemize}
+    \item The values $X_n$ are drawn \titc{independently} from a Gaussian distribution with mean 0 and variance $\sigd_X$.
+    \item The N\textsuperscript{th} order pdf for the Gaussian white noise process is:
+    \[
+    f_{X{n_1},X{n_2},...,X{n_N}}(\alpha_1,\alpha_2,...,\alpha_N) = \prod_{i=1}^N \gau(\alpha_i|0,\sigd_X)
+    \]
+    where 
+    \[
+    \gau(\alpha|\mu,\sigd) = \frac{1}{\sqrt{2\pi \sigd}}\exp\left(-\frac{1}{2\sigd}(\alpha - \mu)^2 \right) 
+    \]
+    is the univariate normal pdf.
+    \item The Gaussian white noise process is \titc{Strict sense stationary}, since:
+    \[
+    f_{X{n_1},X{n_2},...,X{n_N}}(\alpha_1,\alpha_2,...,\alpha_N) = \prod_{i=1}^N \gau(\alpha_i|0,\sigd_X) = f_{X{n_1+c},X{n_2+c},...,X{n_N+c}}(\alpha_1,\alpha_2,...,\alpha_N)
+    \]
+\end{itemize}
+\subsection{Linear systems and random process}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\linewidth]{Part2.1/Linear_system.png}
+\end{figure}
+\subsection{Properties}
+\subsubsection{Wide-sense Stationarity}
+
+When a wide-sense stationary discrete random process $\proc{X}$ is passed through a stable, linear time invariant (LTI) system with digital impulse response $\proc{h}$, the output process $\proc{Y}$, i.e.
+    \[
+    y_n = \sumkinfinf h_k x_{n-k} = X_n * h_n
+    \]
+    is also Wide-sense stationary
+
+\subsubsection{Correlation function}
+
+We can express the output correlation functions and power spectra in terms of the input statistics and the LTI system:
+    \[
+    \crosscoxy[k] =\mexp[X_n Y_{n+k}] = \sum_{l=-\infty}^{\infty}h_l r_{XX}[k-l] = h_k * r_{XX}[k]
+    \]
+    \begin{equation}
+        \autocoy[l] = \mexp[Y_n Y_{n+l}] = \sumkinfinf\sumiinfinf h_k h_i \autocox[l+ i-k] = h_l * h_{-l} * r_{XX}[l]
+        \label{eq:LTI_correlation}
+    \end{equation}
+    
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\linewidth]{Part2.1/LTI_Correlation.png}
+    \caption{Correlation functions with convolution}
+\end{figure}
+\subsubsection{Power spectrum}
+Power spectrum is found by converting this result to the frequency domain by taking DTFT of both sides of Eq.~\ref{eq:LTI_correlation}:
+\begin{equation}
+    S_Y(e^{j\omega T}) = |H(e^{j\omega T})|^2 S_X(e^{j\omega T})
+\end{equation}
+Here $H(e^{j\omega T} = \sumninfinf h_n \exp{-jn\omega T}$ is the frequency response of the system.
+\subsubsection{Example: Filtering white noise}
+\begin{itemize}
+    \item Suppose we filter a zero mean white noise process $\proc{X}$ with a first order \titc{finite impulse response (FIR) filter}:
+    \[
+    y_n = \sum_{m=0}^1 b_m X_{n-m}, \quad \textrm{or} \quad Y(z) = (b_0 + b_1 z^{-1})X(z) 
+    \]
+    with $b_0 = 1, b_1 = 0.9$. This is a \titc{moving average} process
+    \end{itemize}
+    \begin{enumerate}
+    \item The impulse response of this causal filter is:
+    \[
+    \{ h_n\} = \{ b_0,b_1,0,0... \}
+    \]
+    \item The autocorrelation function of $\proc{Y}$ is obtained as:
+    \[
+    r_{YY}[l] = \mexp[Y_n Y_{n+l}] = h_l * h_{-l} * r_{XX}[l]
+    \]
+    \item This convolution can be performed directly. However, it its more straightforward in the frequency domain.
+    \item The frequency response of the filter is:
+    \[
+    H(e^{j\Omega}) = b_0 + b_1 e^{{-j\Omega}}
+    \]
+    \item The power spectrum of $\{X_n \}$ (white noise) is:
+    \[
+    \ps(e^{j\Omega}) = \sigd_X
+    \]
+    \item Hence the power spectrum of $\{ Y_n\}$ is:
+    \begin{align*}
+        S_Y(e^{j\Omega}) &= |H(e^{j\Omega})|^2\ps(e^{j\Omega}) \\
+        &= |b_0 + b_1e^{-j\Omega}|^2 \sigd_X \\
+        & = (b_0 b_1 e^{j\Omega} + (b_0^2 + b_1^2) + b_0 b_1 e^{-j\Omega})\sigd_X
+    \end{align*}
+    \item Comparing this expression with the DTFT of $\autocoy[m]$:
+    \[
+    S_{Y}(e^{j\Omega}) = \summinfinf \autocoy[m]e^{-jm\Omega}
+    \]
+    we can identify non-zero terms in the summations only when $m=-1,0,+1$ as follows: 
+    \[
+    r_{YY}[-1] = \sigd_X b_0 b_1,\quad r_{YY}[0] =\sigd_X (b_0^2 + b_1^2), \quad r_{YY}[1] = \sigd_X b_0 b_1
+    \]
+    
+\end{enumerate}
+\subsection{Ergodic Random process}
+\subsubsection{Why ergodic}
+In practical signal processing systems, correlation function or power spectra may not be known in advance. How could we estimate these for a WSS process? If the process is \empha{ergodic}, then easy methods exists.  
+\subsubsection{Definition of Mean and Correlation ergodic}
+If we measure a realisation $\{x_n \}$ (i.e. one waveform from the ensemble of possible waveforms) of the process $\{ X_n\}$ for some long (ideally infinite) period of time, we can use this to estimate means and correlation functions as follows:
+    \begin{itemize}
+        \item For an \textbf{Ergodic} random process we can estimate expectations by performing time-averaging on a single sample function, e.g.
+        \[
+        \mu = \mexp[X_n] = \lim_{N\rightarrow \infty} \frac{1}{N} \sum_{n=0}^{N-1}x_n \qquad \textrm{Mean ergodic} 
+        \]
+        \[
+        \autocox[k] = \lim_{N\rightarrow \infty} \frac{1}{N} \sum_{n=0}^{N-1}x_n x_{n+k} \qquad \textrm{Correlation ergodic}
+        \]
+        \item These formulae allow us to make estimation for `sufficiently' large $N$:
+        \[
+        \mu = \mexp[X_n] \approx \frac{1}{N}\sum_{n=0}^{N-1}x_n
+        \]
+        \[
+        \autocox[k] \approx \frac{1}{N} \sum_{n=0}^{N-1}x_n x_{n+k} 
+        \]
+    \end{itemize}
+    Clearly, larger $N$ better estimation
+
+\subsubsection{When ergodic?}
+\begin{itemize}
+    \item It is hard in general to determine whether a given process is ergodic
+    \item However, a \textit{necessary} and \textit{sufficient} condition for \titc{mean} ergodicity is given by:
+    \[
+    \lim_{N\rightarrow\infty} \frac{1}{N} \sum_{k=0}^{N-1}c_{XX}[k] = 0
+    \]
+    where $c_XX$ is the \titc{autocovariance} function:
+    \[
+    c_{XX}[k] = \mexp[(X_{n}-\mu)(X_{n+k}-\mu)]
+    \]
+    and $\mu=\mexp[X_n]$
+    \item A simpler sufficient condition for mean ergodicity is that $C_{XX}[0] < \infty$ and 
+    \[
+    \lim_{N\rightarrow \infty} c_{XX}[N] = 0
+    \]
+    \item The logic of sufficient and necessary is that if we can prove the sufficient condition, that guarantees mean ergodicity.
+    \item However, if we can not prove it (the sufficient), or it turns out to be false, we don't know for sure whether the process is ergodic. 
+    \item For necessary and sufficient condition, if we can prove that, then definitely ergodic. If we prove the condition is false, then the process is definitely not ergodic.
+    \item Correlation ergodicity can be studied by extensions of the above theorems. Not examinable.
+    \item Unless otherwise stated, we will always assume that the signals we encounter are both wide-sense stationary and ergodic.
+\end{itemize}
+\subsubsection{Example 1}
+For measurement of the voltages of different battery cells, the population of batteries has a mean value 9V and standard deviation 0.1V and the population is believed to be Gaussian.The voltage across one randomly selected battery cell is measured for a time interval of N samples. It is intuitively obvious that we can’t estimate the mean value of the population from this one set
+of N time measurements, but let’s prove it:
+\begin{enumerate}
+
+
+    \item Consider the `d.c. level' random process:
+    \[
+    X_n = A
+    \]
+    where A is a random variable having the standard Gaussian distribution
+    \[
+    f(A=a) = \gau(a|9,0.01)
+    \]
+    \item The mean of the random is:
+    \[
+    \mexp[X_n] = \intinf x_n(a)f(a) \,d a = \intinf af(a)\, da =9
+    \]
+    \item Now consider a random sample function measured from the ranodm process, say
+    \[
+    x_n = a_0
+    \]
+    \item The `ergodic' average value of this particular sample function is 
+    \[
+    1/N \sum_{n=0}^{N-1}a_0 = a_0
+    \]
+    whatever signal duration $N$ we have available.
+    \item Since in general $a_0 \not = E[A] = 9$, the process is clearly not mean ergodic, but could we have checked this using the mean ergodicity theorems?
+    \item Check this using the mean ergodic theorem. The autocovariance function is:
+    \begin{align*}
+        c_{XX}[k] &= \mexp[(X_{n}-\mu)(X_{n+k}-\mu)] \\
+        &= \mexp[(X_{n}-9)(X_{n+k}-9)] = \mexp[A^2 - 9^2] = \textrm{var}(A) =0.01
+    \end{align*}
+    \item Now 
+    \[
+    \lim_{N\rightarrow \infty}  \frac{1}{N} \sum_{k=0}^{N-1}c_{XX}[k] = 0.01 \times N /N =0.01 \not = 0
+    \]
+    \item Hence the theorem confirms our finding that the process is not ergodic in mean
+    \item While this example highlights a possible pitfall in assuming ergodicity, most of the processes we deal with will, however, be ergodic.
+\end{enumerate}
+\subsubsection{Ergodic example: MA process}
+\begin{itemize}
+    \item The autocorrelation function for the zero mean MA process as 
+    \[
+    r_{YY}[-1] = \sigd_X b_0 b_1,\quad r_{YY}[0] =\sigd_X (b_0^2 + b_1^2), \quad r_{YY}[1] = \sigd_X b_0 b_1
+    \]
+    and zero for all other lags.
+    \item Since it is zero mean, the autocovariance function equals autocorrelation function $r_{YY}$. Hence we can use either the necessary or sufficient condition to show mean ergodicity.
+    \begin{itemize}
+        \item Sufficient condition:
+        \[
+        \lim_{N\rightarrow \infty}C_{YY}[N] = 0
+        \]
+        \item Necessary condition:
+        \[
+        \lim_{N\rightarrow \infty}  \frac{1}{N} \sum_{k=0}^{N-1}c_{YY}[k] = \lim_{N\rightarrow \infty}  \frac{1}{N}(\sigd_Xb_0 b_1 + \sigd_X(b_0^2 + b_1^2) + \sigd_X b_0 b_1) = 0
+        \]
+    \end{itemize}
+    
+\end{itemize}
+\section{Optimal Filtering Theory - Wiener Filters}
+\subsection{Overview}
+\begin{itemize}
+    \item Optimal filtering is an area in which we design filters that are optimally adapted to the statistical characteristics of a random process. 
+    \item Combination of standard filter design for deterministic signals with the random process theory.
+    \item Pioneered in 1940's by Norbert Wiener who designed methods for optimal estimation of a signal measured in noise
+    \item A desired signal $d_n$ is observed in noise $v_n$:
+    \[
+    x_n = d_n + v_n
+    \]
+    \item Wiener showed how to design a linear filter which would optimally estimate $d_n$ given just the noisy observations $x_n$ and some assumptions about the statistics of the random signal and noise processes. This class of filters the \titc{wiener filter}, forms the basis of many fundamental signal processing applications.
+    \item Typical applications include:
+    \begin{itemize}
+        \item Noise reduction e.g. speech and music signals 
+        \item Predication of future values of a signal, e.g. in finance 
+        \item Noise cancellation, e.g. for aircraft cockpit noise
+        \item Deconvolution, e.g. removal of room acoustics (dereverberation) or echo cancellation in telephony
+    \end{itemize}
+    \item The Wiener filter is a very powerful tool. However, it is only the optimal linear estimator for stationary signals. The \titc{Kalman filter} offers an extension for non-stationary signals via \titc{state space models}. In cases where a linear filter is still not good enough, non-linear filtering techniques can be adopted. (Non-examinable)
+\end{itemize}
+\subsection{General filters}
+\begin{itemize}
+ \item The observed signal $x_n$ can be filtered with an infinite dimensional filter, having a non-causal impulse response $h_p$:
+\[
+\{ h_p; p=-\infty,...,-1,0,1,...,\infty \}
+\]
+\item An estimate $\hat(d)_n$ of the desired signal can be obtained by filtering the noisy signal using the filter $\{ h_p\}$:
+\[
+\desest = \sumpinfinf h_p X_{n-p}
+\]
+
+\item Since both $\des$ and $x_n$ are drawn from random processes $\proc{d}$ and $\proc{x}$, performance can only be measured in terms of expectations. The criterion used for Wiener filtering is the mean-squared error (MSE). First, form the error signal $\err$:
+\[
+\err = \des - \desest = \des -  \sumpinfinf h_p X_{n-p}
+\]
+The \titc{mean-squared error (MSE)} is then defined as:
+\begin{equation}
+    J = \mexp[\err^2]
+    \label{eq:MSE}
+\end{equation}
+where the expectation is w.r.t the random signal $d$ and the random noise $v$.
+\item The wiener filter minimises $J$ w.r.t the filter coefficient $\{ h_p\}$
+\end{itemize}
+
+\subsection{Derivation of Wiener filter}
+\subsubsection{Assumption}
+\begin{itemize}
+    \item The Wiener filter assumes that $\proc{x}$ and $\proc{d}$ are \titc{jointly wide-sense stationary}. 
+    \begin{itemize}
+        \item Both means are constant 
+        \item All autocorrelation and cross-correlation functions depend only on the time difference between data points.
+    \end{itemize}
+    \item  Assume $\proc{d}$ and $\proc{v}$ have zero mean 
+    \[
+    \mexp[d_n]=0 \quad \mexp[v_n] = 0
+    \]
+    Non-zero mean processes can be dealt with by first subtracting the mean before filtering.
+\end{itemize}
+\subsubsection{Derivation}
+\begin{enumerate}
+    \item The expected error in Eq.~\ref{eq:MSE} may be minimised w.r.t the impulse response values $\{h_q\}$. A sufficient condition for a minimum is: 
+    \[
+    \dydx{J}{h_q} = \dydx{\mexp[\err^2]}{h_q}=\mexp\left[ \dydx{\err^2}{h_q}\right] = \mexp\left[ 2\err\dydx{\err}{h_q}\right] = 0
+    \]
+    simultaneously for all $q \in \{-\infty,...,-1,0,1,...,\infty \}$.
+    \item The term $\dydx{\err}{h_q}$ is then calculated as:
+    \[
+    \dydx{\err}{h_q} = \dydx{}{h_q}\left\{d_n - \sumpinfinf h_p x_{n-p} \right\} = -x_{n-q}
+    \]
+    since $\des$ and $X_{n-p}$ do not depend on $h_p$ and are treated as constant in the partial derivative.
+    \item Hence the coefficient must satisfy, for all q:
+    \[
+    \mexp\left[ \err \dydx{\err}{h_q}\right] = -\mexp[\err x_{n-q}] = 0
+    \]
+    i.e. 
+    \begin{equation}
+        \mexp[\err x_{n-q}] = 0; \qquad -\infty < q < \infty
+        \label{eq:error_ortho}
+    \end{equation}
+    
+    This is known as the \titc{orthogonality principle}, two random variables $X$ and $Y$ are termed \titc{orthogonal} if 
+    \[
+    \mexp[XY] = 0
+    \]
+    \item Substituting for $\err$ in E.q.~\ref{eq:error_ortho}:
+    \begin{align*}
+        \mexp[\err x_{n-q}] &= \mexp\left[ \left( d_n - \sumpinfinf h_p x_{n-p}\right)x_{n-q}\right] \\
+        & = \mexp[\des x_{n-q}] - \sumpinfinf h_p \mexp[x_{n-q}x_{n-q}] \\
+        & =^{(a)} r_{xd}[q] - \sumpinfinf h_p \autocox[q-p]
+        & = 0
+    \end{align*}
+    (a) since $\mexp[\des x_{n-q}] = r_{dx}[-q] = r_{xd}[q]$
+    \item Rearranging, the solution must satisfy
+    \begin{equation}
+        \sumpinfinf h_p \autocox[q-p] = r_{xd}[q], \qquad -\infty < q +\infty 
+        \label{eq:w-H_eq}
+    \end{equation}
+    Eq.~\ref{eq:w-H_eq} is the \titc{Wiener-Hopf} equations, which involve an infinite number of unknowns $h_q$. The simplest way to solve this is in the frequency domain. 
+    \item Rewrite the \titc{Wiener-Hopf} equations as a discrete-time convolution:
+    \[
+    h_q * \autocox[q] = r_{xd}[q], \qquad -\infty < q < +\infty
+    \]
+    \item Taking DTFT of both sides:
+    \[
+    H(e^{j\Omega})S_x(e^{j\Omega}) =S_{xd}(e^{j\Omega})
+    \]
+    where \textcolor{blue1}{$S_{xd}(e^{j\Omega})$} is defined as the DTFT of \textcolor{blue1}{$r_{xd}[q]$} and is termed the \titc{cross-power spectrum} of $d$ and $x$.
+    \begin{itemize}
+        \item The cross-power spectrum is in general complex valued and measures the coherence between two process at particular frequency. 
+        \item It has the property:
+        \[
+        S_{xd}(e^{j\Omega}) = S_{dx}(e^{j|\Omega})^*
+        \]
+    \end{itemize}
+    \item Rearranging:
+    \begin{equation}
+        H(e^{j\Omega}) = \frac{S_{xd}(e^{j\Omega})}{S_x(e^{j\Omega})}
+        \label{eq:optimal_filter}
+    \end{equation}
+    
+\end{enumerate}
+\subsubsection{Results}
+\begin{itemize}
+    \item Result E.q~\ref{eq:optimal_filter} tells us that the frequency response of the optimal filter for estimating $d$ can be computed given knowledge of just the power spectrum (or equivalently the autocorrelation function) of the noisy signal $x$, and the cross power spectrum (or equivalently the cross-correlation function) between the noisy signal $x$ and the desired signal $d$.
+    \item Depending on scenario, it may be possible to estimate these quantities directly from data, and/or from physical modelling considerations about the system.
+    \item Estimation from data will typically require the process to be ergodic, hence time averages converge to ensemble averages of correlation functions.
+    \item This result in general yields a \textbf{non-causal} filter that is not implementable in practice. The practical approach is either to approximate the filtering in the frequency domain using DFTs, or derive \textbf{sub-classes of Wiener filter} that are \textit{casual} and \textit{implementable}, as considered shortly.
+\end{itemize}
+\subsection{Mean-squared error for the Optimal filter}
+\begin{itemize}
+    \item E.q~\ref{eq:optimal_filter} show how to calculate the optimal filter for a given problem. 
+    \item However, have not given the performance of that optimal filter.
+    \item This can be assessed from the mean-squared error value of the optimal filter: 
+    \begin{align*}
+        J = \mexp[\err^2] &= \mexp[\err(d_n - \sumpinfinf h_p x_{n-p}) \\
+        & = \mexp[\err\des] - \sumpinfinf h_p\mexp\underbrace{[\err x_{n-p}]}_{(a)}
+    \end{align*}
+    (a): =0 at optimal from E.q~\ref{eq:error_ortho}
+    \item Thus, the minimum error is:
+    \begin{align*}
+        J_{\min} &= \mexp[\err \des] \\
+        & = \mexp[(\des - \sumpinfinf h_p x_{n-p}) d_n] \\
+        & = r_{dd}[0] - \sumpinfinf h_p r_{xd}[p]
+    \end{align*}
+\end{itemize}
+Steps to find the minimum error
+\begin{enumerate}
+    \item Compute the autocorrelation function for the error signal
+    \begin{align*}
+        r_{\epsilon\epsilon}[k] &= \mexp[\epsilon_n \epsilon_{n+k}] = \mexp\left[(\des - \sum_{p_1=-\infty}^{\infty} h_{p_1} x_{n-p_1}) (d_{n+k} - \sum_{p_2=-\infty}^{\infty} h_{p_2} x_{n+k-p_2}) \right] \\
+        & = \mexp\left\{ d_n d_{n+k} - d_n\sum h_{p_2}x_{n+k-p_2} - d_{n+k}\sum h_{p_1}x_{n-p_1} + \sum\sum h_{p_1}h_{p_2}x_{n-p_1}x_{n+k-p_2}         \right\} \\
+        & = r_{dd}[k] - \mexp\left\{\sum h_p r_{dx}[n+k-p-n] - \sum h_p r_{dx}[n-p-n-k] - \sum\sum r_{xx}[k-p_2 + p_1]\right\} \\
+        & = r_{dd}[k] - \mexp\left\{\sum h_p r_{dx}[k-p] - \sum h_p r_{xd}k+p] - \sum\sum r_{xx}[k-p_2 + p_1]\right\} \\
+        & = r_{dd}[k] - h_p * r_{dx}[k] - h_p^* * r_{xd}[k] + h_p * h_p^* * r_{xx}[k] \\
+    \end{align*}
+    \item Take its DTFT to get the power spectrum of the error signal
+    \begin{align*}
+        S_{\epsilon}(e^{j\Omega}) &= S_D - S_{DX} \cdot H - S_{XD} \cdot H^* + S_X \cdot |H|^2
+    \end{align*}
+    \item By taking the Inverse DTFT and put in $H = H^{\opt}$ to get the power of minimum of the error
+    \begin{align*}
+        J_{\min} &= \mexp[\err^2] = r_{{\epsilon\epsilon} }[m=0] \\
+        & = \frac{1}{2\pi}\intpipi S_{\epsilon}(e^{j\Omega})e^{jm\Omega}\, d\Omega \\
+        & = \frac{1}{2\pi}\intpipi S_{\epsilon}(e^{j\Omega})\, d\Omega \\
+        & = \frac{1}{2\pi}\intpipi S_D - S_{DX} \cdot H - S_{XD} \cdot H^* + S_X \cdot |H|^2\, d\Omega \\
+        & = \frac{1}{2\pi}\intpipi S_D - S_{DX} \cdot \frac{S_{XD}}{S_X} - H \cdot S_X \cdot H^* + S_X \cdot |H|^2\, d\Omega \\
+        & = \frac{1}{2\pi}\intpipi S_D - S_{DX} \cdot \frac{S_{XD}}{S_X}\, d\Omega \\
+        & = \frac{1}{2\pi}\intpipi S_D(e^{j\Omega}) - S_{XD}^* \cdot H(e^{j\Omega})\, d\Omega \\
+    \end{align*}
+    Since $H^{\opt} = \frac{S_{XD}}{S_X}$ and $S_{XD} = S_{DX}^*$
+\end{enumerate}
+\subsection{Special Case: Uncorrelated Signal and Noise Process}
+\begin{itemize}
+    \item An important sub-class of the Wiener filter can be gained by considering the case where the desired signal process $\proc{d}$ is uncorrelated with the noise process $\proc{v}$, i.e.
+    \[
+    r_{dv}[k] = \mexp[d_v v_{n+k}] = 0,\quad -\infty < k \infty
+    \]
+    \item This is a typical scenario in which $v$ might be environmental noise that is independent of the desired signal and hence uncorrelated.
+    \item One side concept: random variables that are independent and zero mean are uncorrelated; however, uncorrelated random zero mean random variables are not assured to be independent. (Independent stronger than correlation)
+    \item In the Wiener-Hopf equations:
+    \[
+    \sumpinfinf h_p \autocox[q-p] = r_{xd}[q], \qquad -\infty < q +\infty 
+    \]
+    \begin{enumerate}
+        \item $r_{xd}$.
+        \begin{align*}
+            r_{xd}[q] &= \mexp[x_n d_{n+q}]  \\
+            &= \mexp[(d_n + v_n)d_{n+q}] \\
+            &= \mexp[d_n d_{n+q}] + \underbrace{\mexp[v_n d_{n+q}]}_{=0} \\
+            &= \mexp[d_n d_{n+q}]
+        \end{align*}
+        Taking DTFT:
+        \[
+        S_{xd}(e^{j\Omega}) = S_{d}(e^{j\Omega})
+        \]
+        \item $r_{XX}$.
+        \begin{align*}
+            r_{XX}[q] &= \mexp[x_n x_{n+q}] \\
+            &= \mexp[(d_n + v_n)(d_{n+q}+ v_{n+q})] \\
+            &= \mexp[d_n d_{n+q}] + \mexp[d_n v_{n+q} ] + \mexp[v_n d_{n+q}] + \mexp[v_n v_{n+q}] \\
+            &= r_{dd}[q] + r_{vv}[q] 
+        \end{align*}
+        Taking DTFT:
+        \[
+        S_x(e^{j\Omega}) = S_d(e^{j\Omega}) + S_v(e^{j\Omega})
+        \]
+        \item Thus the Wiener filter becomes
+        \begin{equation}
+            H(e^{j\Omega}) = \frac{S_{xd}}{S_x} =\frac{S_d(e^{j\Omega})}{S_d(e^{j\Omega}) + S_v(e^{j\Omega})} = \frac{1}{1 + 1/\rho(\Omega)}
+            \label{Eq:Wie_SNR}
+        \end{equation}
+        
+
+        where $\rho(\Omega) = S_d(e^{j\Omega} / S_v(e^{j\Omega}$ is the signal-to-noise (SNR) power ratio. 
+    \end{enumerate}
+    \item From E.q~\ref{Eq:Wie_SNR} the behaviour of the filter is intuitively reasonable:
+    \begin{itemize}
+        \item The gain is always non-negative, and ranges between 0 and 1. Hence the filter will never boost a particular frequency component; rather it acts as an optimal attenuation rule.
+        \item At those frequencies where the SNR is large, the gain of the filter tends to unity; whereas the gain tends to a small value at those frequencies where the SNR is small. Essentially, when the signal is very noisy, the best estimate the filter can make in a MSE sense is zero.
+    \end{itemize}
+    \item The minimum expected error in this case:
+    \begin{align*}
+        J_{\min} &= \frac{1}{2\pi}\intpipi S_D(e^{j\Omega}) - S_{XD}^* \cdot H(e^{j\Omega})\, d\Omega \\
+        &= \frac{1}{2\pi}\intpipi S_D(e^{j\Omega}) - S_{D} \cdot H(e^{j\Omega})\, d\Omega \\
+        &= \frac{1}{2\pi}\intpipi S_D(e^{j\Omega})\left(1 -\frac{S_d(e^{j\Omega})}{S_d(e^{j\Omega}) + S_v(e^{j\Omega})} \right)  \, d\Omega \\
+        &= \frac{1}{2\pi}\intpipi S_D(e^{j\Omega})\left(1 - \frac{1}{1 + 1/\rho(\Omega)} \right)  \, d\Omega \\
+        &= \frac{1}{2\pi}\intpipi S_D(e^{j\Omega})\left(\frac{1}{1+\rho(\Omega)} \right)  \, d\Omega \\
+    \end{align*}
+    in which error tends to the power spectrum of $\proc{d}$ when SNR is poor and tends to zero when SNR is good at a particular frequency.
+\end{itemize}
+\subsection{Example:AR process}
+Problem Setting:
+\begin{itemize}
+    \item An autoregressive process $\proc{d}$ of order 1 is generated as:
+\[
+d_n = a_1 d_{n-1} +e_n
+\]
+with $e_n$ as zero mean, variance $\sigd_e$ white noise 
+\item Rewrite in z-transform domain and zero initial conditions:
+\[
+D(z) = a_1 z^{-1}D(z) + E(z)
+\]
+hence 
+\[
+D(Z) = \frac{E(z)}{1-a_1 z^{-1}} = H(z)E(z)
+\]
+where $H(z) = \frac{1}{1- a_1 z^{-1}}$ is a transfer function between e and d.
+\item The frequency response is thus:
+\[
+H(e^{j\Omega}) = \frac{1}{1- a_1 exp^{-j\Omega}}
+\]
+\item Power spectrum is then obtained from the linear systems result
+\[
+S_d(e^{j\Omega}) = |H(e^{j\Omega})|^2 S_e(e^{j\Omega}) = \frac{\sigd_e}{(1- a_1 exp^{-j\Omega})(1- a_1 exp^{+j\Omega})}
+\]
+\item Suppose the process is observed in zero mean white noise with variance $\sigd_v$ and is uncorrelated with $\proc{d}$:
+\[
+x_n = d_n + v_n
+\]
+\item Design the Wiener filter for estimation of $d_n$.
+\end{itemize}
+Solution:
+\begin{enumerate}
+    \item Use the uncorrelated frequency response formula:
+    \begin{align*}
+        H^{\opt} (e^j\Omega) &= \frac{S_d}{S_d + S_v} \\
+        &= \dfrac{\dfrac{\sigd_e}{(1- a_1 e^{-j\Omega})(1- a_1 e^{+j\Omega})}}{\dfrac{\sigd_e}{(1- a_1 e^{-j\Omega})(1- a_1 e^{+j\Omega})} + \sigd_v} \\ 
+        &= \frac{\sigd_e}{\sigd_e + \sigd_v(1- a_1 e^{-j\Omega})(1- a_1 e^{+j\Omega}) } 
+    \end{align*}
+    \item Inverse DTFT is applied to find the impulse response of the filter
+\end{enumerate}
+
+\subsection{FIR Wiener filter}
+\begin{itemize}
+    \item In the previous part, the filter is non-causal. The impulse response $h_p$ is defined for values of $p$ less than 0. 
+    \item Here a practical alternative in which a causal $P$th order Finite Impulse Response Wiener filter is developed.
+    \item In the FIR case the signal estimate is:
+    \[
+    \desest = \sumpzerop h_p X_{n-p}
+    \]
+    and we minimise, as before the MSE:
+    \[
+    J = \mexp[(\des - \desest)^2]
+    \]
+    \end{itemize}
+    \subsubsection{Derivation of the FIR filter}
+    \begin{itemize}
+    \item The filter derivation proceeds much as before, and we need to solve 
+    \[
+    \dydx{J}{h_q} = \mexp\left[ 2\err \dydx{\err}{h_q}\right] = 0, \qquad \textrm{for } q=0,1,...P.
+    \]
+    \item Then, as before:
+    \[
+    \dydx{\err}{h_q} = \dydx{}{h_q}\left\{ d_n - \sumpzerop h_p x_{n-p}\right\} = - x_{n-q}
+    \]
+    leading to the orthogonality principle:
+    \[
+    \mexp[\err x_{n-q}] = 0; \qquad q=0,..,P
+    \]
+    and Wiener-Hopf equations as follows:
+    \[
+    \sumpzerop h_p r_{xx}[q-p] = r_{xd}[q], \qquad q=0,1,...,P
+    \]
+    \item This is a simple finite set of simultaneous equations that we can solve in the time domain. The equations may be written in matrix form as:
+    \[
+    R_x h = r_{xd}
+    \]
+    where:
+    \[
+    h = \begin{bmatrix}
+    h_0 \\
+    h_1 \\
+    \vdots \\
+    h_P
+    \end{bmatrix}
+    \qquad 
+    r_{xd} = \begin{bmatrix}
+    r_{xd}[0]\\
+    r_{xd}[1]\\
+    \vdots \\
+    r_{xd}[P]\\
+    \end{bmatrix}
+    \]
+    and 
+    \[
+    R_X = \begin{bmatrix}
+    r_{xx}[0] & r_{xx}[1] & \hdots & r_{xx}[P] \\
+    r_{xx}[1] & r_{xx}[0] & \hdots & r_{xx}[P-1] \\
+    \vdots & \vdots & \ddots & \vdots \\
+    r_{xx}[P] & r_{xx}[P-1] & \hdots & r_{xx}[0] \\
+    \end{bmatrix}
+    \]
+    $R_x$ is known as the \titc{correlation matrix}.
+    \item Note that $\autocox[k]=\autocox[-k]$ so that the correlation matrix $R_x$ is symmetric and has constant diagonals (a symmetric \titc{Toeplitz} matrix)
+    \item The coefficient vector can be found by matrix inversion:
+    \[
+    h = R_X^{-1} r_{xd}
+    \]
+    \item For finding the impulse response of the FIR filter, we need to have \textit{a-priori} knowledge of the autocorrelation matrix $R_x$ and the cross-correlation $r_{xd}$
+    \item The minimum mean-square error is given by:
+    \begin{align*}
+        J_{\min} =& \mexp[\err d_n] \\
+        =& \mexp[(d_n \sumpzerop h_p x_{n-p})d_n] \\
+        =& r_{dd}[0] - \sumpzerop h_p r_{xd}[p] \\
+        = &r_{dd}[0] - r^T_{xd} h \\
+        =& r_{dd}[0] - r^T_{xd} R_x^{-1}r_{xd}
+    \end{align*}
+    
+\end{itemize}
+\subsection{Case study: audio noise reduction}
+\subsubsection{Overview and assumptions}
+\begin{itemize}
+    \item Consider a section of acoustic waveform $d_n$ that is corrupted by additive noise $v_n$
+    \[
+    x_n = d_n + v_n
+    \]
+    $d_n$: Clean audio signal \qquad $x_n$: Noisy audio signal  
+    \begin{figure}[H]
+        \centering
+        \includegraphics{Part2.1/Audio_1.png}
+    \end{figure}
+    \item Implement FIR Wiener filter to reduce the noise in the signal.
+    \item Assume that the section of data is wide-sense stationary and ergodic (approx. true for a short segment around 1/40 s).
+    \item Assume also that the noise is white and uncorrelated with the audio signal and have variance $\sigd_v$ i.e.
+    \[
+    r_{vv}[k] =\sigd_v \delta[k]
+    \]
+\end{itemize}
+\subsubsection{Wiener filter}
+\begin{itemize}
+    \item The wiener filter in this case needs
+    \begin{itemize}
+        \item $r_{xx}[k]$, Autocorrelation of noisy signal
+        \item $r_{xd}[k] = r_{dd}[k]$, Autocorrelation of desired signal
+    \end{itemize}
+    \item Since signal is assumed ergodic, these quantities can be estimated:
+    \[
+    \autocox[k]\approx\frac{1}{N} \sum_{n=0}^{N-1}x_n X_{n+k}
+    \]
+    \[
+    r_dd[k] = r_{xx}[k] -r_{vv}[k] = \left\{ \begin{array}{ll}
+        \autocox[k], & k \not = 0 \\
+        \autocox[0] -\sigd_v ,& k =0 
+    \end{array} \right. 
+    \]
+    \item Under what conditions would $r_{dd}[k]$ form a valid autocorrelation sequence for construction of $R_x$?
+    \begin{itemize}
+        \item A necessary condition is that the resulting $R_x$ matrix is non-negative definite.
+        \item Definition of non-negative definiteness :
+        \[
+        a^T R_x a \ge 0
+        \]
+        for any length $P+1$ vector a.
+        \item Now, form the vector $x_n = [X_n,X_{n-1}...X_{n-P}]^T$.
+        \item Take now the non-negative quantity:
+        \[
+        (a^T X_n)^2 = (a^T X_n)(X_n^T a) = a^T (x_n X_n^T) a
+        \]
+        \item The ($i,j$)th element of $x_n X_n^T$ is $x_{n-i+1}x_{n-j+1}$ and $\mexp[x_{n-i+1}x_{n-j+1}] = \autocox[i-j]$. Hence $\mexp[x_n x_n^T] = R_x$
+        \item Now take the expectation of the non-negative quantity which itseld will therefore be non-neagtive:
+        \[
+        \mexp[(a^T X_n)^2] = a^T \mexp[(x_n X_n^T)] a = a^T R_x a \ge 0
+        \]
+        and hence the correlation matrix of any vector $x_n$ must be non-negative definite.
+    \end{itemize}
+    \item Choose the filter length $P$, form the autocorrelation matrix and cross-correlation vector and solve in Matlab:
+    \[
+    h = R_x^{-1}r_{xd}
+    \]
+    \item The output looks like this with $P =350$
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Part2.1/Audio_2.png}
+    \end{figure}
+    \item The theoretical MSE is calculated as:
+    \[
+    J_{\min} = r_{dd}[0] - r_{xd}^T h
+    \]
+    \item This can be computed for various filter lengths, and in this artificial scenario we can compare the theoretical error performance with the actual MSE, since we have access to the true $d_n$ itself:
+    \[
+    J_{\textrm{true}}=\frac{1}{N}\sum_{n=0}^{N-1} (\des -\desest)^2
+    \]
+    Not necessarily equal to the theoretical value since we estimated the autocorrelation functions from finite pieces of data and assumed stationarity of the processes.
+
+\end{itemize}
+\subsection{Extending the Wiener filter}
+\begin{itemize}
+    \item The Wiener Filter can readily be extended to deal with cases outside the regular noise reduction case. You could replace the desired signal $d$ with whatever one wants to predict or estimate and then rederive the new version of the filter.
+    \item Generally, for the FIR case the formula
+    \[
+    h = R_x^{-1}r_{xd}
+    \]
+    applies to whatever the form of the desired signal and the `noisy' signal, provided you can calculate the necessary correlation functions.
+    \item The theory for non-standard cases will be examinable.
+    \item Examples are:
+    \begin{enumerate}
+        \item Prediction of a noisy signal $\{u_n\}$. The model for the noisy signal is as before:
+        \[
+        x_n = u_n + v_n
+        \]
+        but now we define the desired signal to be the predicted value of the signal, $d_n = u_{n+p}$, where $p$ is the desired prediction interval. The FIR Wiener estimate takes the same form as before:
+        \[
+        \desest = \sumpzerop h_p x_{n-p}
+        \]
+        the error is $\err = \des - \desest$ just as before
+        \item Smoothing of a noisy signal. In this case we use the current samples to get an even better estimate of the signal at some point in the past. The setup is exactly the same as for prediction, except that $d_n = u_{n-p}$ where $p$ is the amount of `lookahead' that we can allow. This would be appropriate in systems where a certain time-lag or or latency is allowable before the signal estimate needs to be obtained.
+        \item Deconvolution. To extract a signal $u_n$ from a noisy convolved version of itself:
+        \[
+        x_n \sum_{q=0}^Q h_q u_{n-q} + v_n
+        \] 
+        The setup is the same as for the regular filter, setting $d_n = u_n$, but we will have a more complex expression for the autocorrelation function of $x_n$ and the cross-correlation between $d$ and $x$.
+        One example is the removal of room acoustics from a voice signal $u_n$.
+    \end{enumerate}
+\end{itemize}
+\section{Optimal Detection - Matched Filter}
+\subsection{What is Matched Filter}
+\begin{itemize}
+    \item The Wiener filter shows how to extract a random signal from a random noise environment.
+    \item How about detecting a known deterministic signal $s_n$, $n=0,...,N-1$, buried in random noise $v_n$:
+    \[
+    x_n = s_n +v_n
+    \]
+    for example:
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Part2.1/Matched_noise.png}
+    \end{figure}
+    \item The method is \titc{Matched filter}
+    \item It finds extensive application in detection of pulses in communications data, radar and sonar data
+\end{itemize}
+
+\subsection{Formulate the problem}
+\begin{itemize}
+    \item First `vectorise' the equation:
+    \[
+    x = s + v
+    \]
+    \[
+    s= [s_0,s_1,...,s_{N-1}]^T, \quad x = [x_0,x_1,...,x_{N-1}]^T
+    \]
+    \item Once again, we will design an optimal FIR filter for performing the detection task. Suppose the filter has coefficients $h_m$, for $m= 0,1,...,N-1$, then the output of the filter at time $N-1$ is:
+    \begin{align*}
+        y_{N-1} &= \sum_{m=0}^{N-1}h_m x_{N-1-m} \\
+        & = h^T \Tilde{x} \\
+        & = h^T (\Tilde{s} + \Tilde{v}) \\
+        & = h^T\Tilde{s} + h^T\Tilde{v} \\
+        & = y^s_{N-1} + y^n_{N-1} 
+    \end{align*}
+    where $\Tilde{x} = [x_{N-1},X_{N-2},...,x_0]^T$ is the `time-reversed' vector. $y^s_{N-1}$ is defined as the output from the signal-only part and $ y^n_{N-1}$ is the output from just the noise going through the filter.
+    
+    \item Instead of minimising the MSE, we maximise the signal-to-noise ratio (SNR) at the output of the filter, hence giving best possible chance of detecting the signal $s_n$.
+    \item Define output SNR as:
+    \[
+    \frac{\mexp[|y^s_{N-1}|^2]}{\mexp[|y^n_{N-1}|^2]} = \frac{\mexp[|h^T\Tilde{s}|^2]}{\mexp[|h^T\Tilde{v}|^2]} = \frac{|h^T\Tilde{s}|^2}{\mexp[|h^T\Tilde{v}|^2]}
+    \]
+    since numerator is not a random quantity and only the noise (v) part is random.
+    \end{itemize}
+\subsection{Signal output energy}
+\begin{itemize}
+    \item The signal component at the output is $y^s_{N-1} = h^T \Tilde{s}$, with energy 
+    \[
+    |h^T \Tilde{s}|^2 = (h^T \Tilde{s})(\Tilde{s}^T h) = h^T (\Tilde{s} \Tilde{s}^T)h
+    \]
+    \item To analyse this, consider the matrix $M = \Tilde{s}\Tilde{s}^T$. What are its eigenvectors/eigenvalues ?
+    \begin{itemize}
+    \item Recall the definition of eigenvectors (e) and eigenvalues ($\lambda$):
+    \[
+    Me = \lambda e
+    \]
+    \end{itemize}
+    \item Try $e = \Tilde{s}$:
+    \[
+    M\Tilde{s} = (\Tilde{s}\Tilde{s}^T)\Tilde{s} = \Tilde{s}(\Tilde{s}^T\Tilde{s}) = (\Tilde{s}^T\Tilde{s})\Tilde{s}
+    \]
+    Hence the unit length vector $e_0 = \Tilde{s}/|\Tilde{s}|$ is an eigenvector and $\lambda = (\Tilde{s}^T\Tilde{s}) is the corresponding$
+    \item Now consider any vector $e'$ which is orthogonal to $e_0$ (i.e. $\Tilde{s}^T e' =0$):
+    \[
+    Me' = \Tilde{s}\Tilde{s}^T = 0
+    \]
+    \begin{itemize}
+    \item Hence $e'$ is also an eigenvector, but with eigenvalue $\lambda' = 0$. 
+    \item Since we can construct a set of $N-1$ orthonormal (unit length and orthogonal to each other) vectors which are orthogonal to $\Tilde{s}$, call these $e_1,e_2,...,e_{N-1}$, we have now discovered all $N$ eigenvectors/eigenvalues of M.
+    \end{itemize}
+    \item Since the N eigenvectors form an orthonormal basis, we may represent any filter coefficient vector h as a linear combination of these:
+    \[
+    h = \alpha e_0 + \beta e_1 +\gamma e_2 + ... + ...e_{N-1}
+    \]
+    \item Thus we can express
+    \begin{align*}
+        Mh &= M(\alpha e_0 + \beta e_1 +... +...e_{N-1}) \\
+        &= \alpha Me_0 + ... + ...Me_{N-1} \\
+        &= \alpha(\Tilde{s}^T \Tilde{s})e_0 + 0 +0 + 0 +... + 0 \\
+        & = \alpha(\Tilde{s}^T \Tilde{s})e_0
+    \end{align*}
+    since all but the first eigenvalue is zero.
+    \item Now, consider the signal output energy again:
+    \begin{align*}
+        h^T\Tilde{s}\Tilde{s}^T h & = h^T M h \\
+        & = h^T \alpha (\Tilde{s}^T \Tilde{s})e_0 \\
+        & = \alpha (\Tilde{s}^T \Tilde{s}) h^T e_0 \\
+        & = (\alpha \Tilde{s}^T \Tilde{s}) (\alpha e_0 + \beta e_1 +... +...e_{N-1})^T e_0\\
+        & = \alpha \Tilde{s}^T \Tilde{s}
+    \end{align*}
+    since $e_0^T e_j = \delta[j]$ (eigenvectors are othonormal).
+\end{itemize}
+
+\subsection{Noise output energy}
+\begin{itemize}
+    \item Now consider the expected noise output energy, which may be simplified as follows:
+    \[
+    \mexp[|h^T\Tilde{v}|^2] = \mexp[h^T\Tilde{v}\Tilde{v}^T h] = h^T \mexp[\Tilde{v}\Tilde{v}^T]h
+    \]
+    \item Consider the case where the noise is white and zero mean with variance $\sigd_v$. Then, for any time indexes $i=0,..,N-1$ and $j=0,...,N-1$:
+    \[
+    \mexp[v_iv_j] = \left\{\begin{array}{ll}
+        \sigd_v, & i=j  \\
+         0,& i\not = j 
+    \end{array} \right.
+    \]
+    and hence 
+    \[
+    \mexp[\Tilde{v}\Tilde{v}^T] = \sigd_v I
+    \]
+    where I is the $N \times N$ identity matrix, as the diagonal elements are those `$i=j$' terms and the off-diagonal are `$i\not = j$' terms.
+    \item So we have the expression for the noise output 
+    \[
+    \mexp[|h^T\Tilde{v}|^2] = \sigd_v I h^T h
+    \]
+    and expending h in terms of the eigenvectors of M:
+    \[
+    \sigd_v I h^T h = \sigd_v(\alpha^2 + \beta^2 + \gamma^2 + ...)
+    \]
+    once again, all the other crossover terms are zero.
+\end{itemize}
+
+\subsection{SNR Maximisation}
+\begin{itemize}
+    \item The SNR may now be expressed as:
+    \[
+    \frac{|h^T \Tilde{s}|^2}{\mexp[|h^T \Tilde{v}|^2]} = \frac{\alpha^2 \Tilde{s}^T \Tilde{s}}{\sigd_v(\alpha^2 + \beta^2 + \gamma^2 + ...)}
+    \]
+    \item Scaling h by some factor $\rho$ will not change the SNR since numerator and denominator will both scale equally be $\rho^2$. So, we can arbitrarily fix $|h|=1$ and then maximise.
+    \item With $|h| = 1$ we have $(\alpha^2 + \beta^2 + ...) = 1$ and the SNR becomes just equal to 
+    \[
+    \frac{\alpha^2 \Tilde{s}^T \Tilde{s}}{\sigd_v}
+    \]
+    \item The largest possible value of $\alpha$ given that $|h|=1$ is 1 and that implies $\beta=\gamma = 0$ and the solution becomes:
+    \[
+    h^{\opt} = 1 \times e_0 = \frac{\Tilde{s}}{|\Tilde{s}|}
+    \]
+    i.e. the optimal filter coefficients are just the normalised time-reversed signal
+    \item The SNR at the optimal filter setting is given by
+    \[
+    \textrm{SNR}^{\opt}=\frac{\Tilde{s}^T \Tilde{s}}{\sigd_v}
+    \]
+    and clearly the performance depends very much on the energy of the signal $s$ and the noise $v$.
+\end{itemize}
+
+\subsection{Practical Implementation of the matched filter}
+\begin{itemize}
+    \item A batch of data of same length as the signal s and optimised a filter h of the same length are chosen.
+    \item In practice we would now run this filter over a much longer length of data $x$ which maximum energy occurs. This is the point at which $s$ can be detected and optimal thresholds can be devised to make the decision on whether a detection of $s$ should be declared at that time.
+    \item In fact, we have only proved that the signal to noise ratio is maximised at one single filter output time, $n = N-1$.However, given a stationary noise process, it is straightforward to show that the signal output power term for the optimal filter is always less than that computed for $n=N-1$ since the deterministic correlation function of $s_n$ always has its maximum at lag zero.
+    \item Example:  a square pulse radar detection problem
+    \[
+    s_n = \textrm{Rectangle pulse} = \left \{
+    \begin{array}{ll}
+        1, & n=0,1,...,T-1 \\
+        0, & \textrm{otherwise}
+    \end{array}\right.
+    \]
+    \begin{itemize}
+        \item Optimal filter is the normalised time reversed version of $s_n$:
+        \[
+        h_n^{\opt} = \left\{ \begin{array}{ll}
+            1/\sqrt{T}, & n=0,1,...,T-1 \\
+            0 & \textrm{otherwise}
+        \end{array}\right.
+        \]
+        \item SNR achievable at detection point:
+        \[
+        \textrm{SNR}^\opt = \frac{\Tilde{s}^T\Tilde{s}}{\sigd_v} = \frac{T}{\sigd_v}
+        \]
+        \item Compare with the best SNR attainable before matched filtering:
+        \[
+        \textrm{SNR}= \frac{\textrm{Max signal value}^2}{\textrm{Average noise energy}} =\frac{1}{\sigd_v}
+        \]
+        i.e. a factor of $T$ improvement, which could be substantial for long pulses $T >>1$ 
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\linewidth]{Part2.1/matched_example.png}
+        \end{figure}
+    \end{itemize}
+    \item Example: saw-tooth pulse:
+    \[
+    s_n = \textrm{Sawtooth pulse} = \left\{ \begin{array}{ll}
+        n+1, & n=0,1,...,T-1  \\
+        0, & \textrm{otherwise}
+    \end{array}\right.
+    \]
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Part2.1/Mached_example2.png}
+    \end{figure}
+\end{itemize}
+\section{Estimation theory and Inference}
+\begin{itemize}
+    \item Wiener Filter is a special example of estimation theory
+    \item In general, statistical estimation involves the analysis of random data in order to determine quantities of interest. Wherever models need to be fitted to signal data, or quantitative hypothesis tested about datasets, estimation and inference will be required.
+    \item Simple examples include the estimation of mean and variance for a collection of random mesurements, while more sophisticated examples might involve the estimation of parameters for some complex probability model of a signal such as multiple sinusoid model or an autoregressive model.
+\end{itemize}
+\subsection{Estimation and Inference}
+\begin{enumerate}
+    \item In estimation theory, we start off with a vector of signal measurements x:
+    \[
+    x = \begin{bmatrix}
+    x_0 \\
+    x_1 \\
+    \vdots \\
+    x_{N-1}
+    \end{bmatrix}
+    \]
+    and some unknown quantities or parameters that we wish to infer:
+    \[
+    \theta = \begin{bmatrix}
+    \theta_0 \\
+    \theta_1 \\
+    \vdots \\
+    \theta_{P-1}
+    \end{bmatrix}
+    \]
+    Usually $P << N$ i.e., we have a lot more data than parameters, but in some of the modern modelling scenarios used in genomics, could be conversely.
+    \item Suppose the probability distribution of the data $x$ can be expressed in terms of a joint probability density function (or probability mass function if discrete), or likelihood function:
+    \[
+    p(x|\theta)
+    \]
+    \item The likelihood function forms a generative model for the data, expressing how `likely' different realisations of the observed data would be if we knew the underlying model parameters $\theta$. This is conceptually the same thing as the random ensemble in random process theory.
+    \begin{itemize}
+        \item E.g. A measured battery voltage is 
+        \[
+        X \sim \gau(\mu, \sigd)
+        \]
+    \end{itemize}
+    \item In many problems we may treat $\theta $ as a random vector, and from physical or other modelling considerations, a prior probability density function can be formulated for $\theta$:
+    \[
+    p(\theta)
+    \]
+    \item Such a probability distribution will represent prior belief about likely parameter configurations before any data have been seen. The prior distribution could be used to regularise the inference problem by constraining the paramter search to reasonable parts of the domain of $\theta$.
+\begin{itemize}
+    \item For example, for the battery example, the population of batteries is known to have a mean around 9V, but we don't know it exactly. The prior could be assumed Gaussian and centered on 9V and the prior variance, say 0.1:
+    \[
+    p(\mu) = \gau(9,0.1)
+    \]
+\end{itemize}
+\item A strong prior regulariser would be required for cases where $P >> N$, for example the notion of `sparsity' in which the prior encodes the notion that only a few of the $\theta $ elements are non-zero. Such framework fit broadly in to the category of Bayesian estimation, since Bayes' Theorem will be used to carry out the inference.
+\item In other problems, we may not wish to consider $\theta$ to be a random quantity at all. In theses cases we can rely only on the likelihood function, and this is known as \textit{Classical} or \textit{Likelihood-based} inference. In such cases, it will be hard to regularise the solutions in the way that is possible within a Bayesian framework, and artificial regularisations may need to be introduced for analysis of complex models.
+\item In \textit{Estimation} problems, the task will be ti formulate an estimate $\hat{\theta}$ which is close in some sense to the true $\theta$
+\item \textit{Inference} on the other hand, has estimation as a special case, but is more general in that we attempt to study the whole probability distribution of the unknown, including the uncertainties that remain about the value of $\theta$ once the data $x$ have been observed
+\end{enumerate}
+\subsection{General Linear Model}
+\subsubsection{Definition}
+\begin{itemize}
+    \item Models and likelihoods can take all sorts of forms. This class of models includes autoregressive model, the random sinusoid and various ad hoc/physically based structures that find use in applications.
+    \item The general Linear Model is also known as the \titc{Linear Regression} model in Machine Learning and Statistics.
+\end{itemize}
+\subsubsection{Formulation}
+\begin{enumerate}
+    \item In the Linear Model it is assumed that the data $x$ are generated as a linear function of the parameters $\theta$ with an additive random modelling error term $e_n$:
+    \[
+    x_n = g_n^T \theta + e_n
+    \]
+    where $g_n$ is a P-dimensional column vector
+    \item The expression may be written for the whole vector $x$ as 
+    \[
+    \mathbf{x = G \thetab + e}
+    \]
+    where 
+    \[
+    G = \begin{bmatrix}
+    g_0^T \\
+    g_1^T\\
+    \vdots \\
+    g_{N-1}^T
+    \end{bmatrix}                                              
+    \]
+    \item Choice of the matrix G, the Design Matrix, will lead to a wide range of possible models, G may contain regression variables from another observed process, structural terms from the model, or even regressed values of x, as will be seen now
+\end{enumerate}
+\subsubsection{Example 1: Constant level in noise}
+
+Here we have a single parameter $\theta $ to model the unknown constant level;
+    \[
+    x_n = \theta = e_n
+    \]
+    and hence a very simple form for the design matrix:
+    \[
+    G = \begin{bmatrix}
+    1 \\
+    1 \\
+    \vdots \\
+    1
+    \end{bmatrix}
+    \]
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.5\linewidth]{Part2.2/Constant Level.png}
+    \end{figure}
+\subsubsection{Example 2: the Sinusoidal model}    
+\begin{itemize}
+    \item This model forms the basic building block for many frequency and spectral estimation algorithms. It is also used in sinusoidal speech coders.
+    \item If we write a single sinusoid as the sum of sine and cosine components at a particular (known for now) frequency $\omega$, we have:
+    \[
+    x_n =a \cos(\omega n) + b \sin(\omega n) + e_n
+    \]
+    where $a$ and $b$ are unknown parameters. This is equivalent to a sinusoid with uniformly random phase and random amplitude.
+    \item Thus we can form a second order ($P=2$) linear model from this if we take:
+    \[
+    G = \begin{bmatrix}
+    c(\omega) & s(\omega)
+    \end{bmatrix}, \quad \theta = \begin{bmatrix}
+    a \\
+    b
+    \end{bmatrix}
+    \]
+    where 
+    \[
+    c(\omega) = [ \cos(0) , \cos(\omega), \cos(2\omega), ...,\cos((N-1)\omega)]^T
+    \]
+    and 
+    \[
+    s(\omega) = [\sin(0), \sin(\omega), \sin(2\omega),...,\cos((N-1)\omega)]^T
+    \]
+    \begin{figure}[H]
+        \centering
+        \includegraphics{Part2.2/Sinu.png}
+    \end{figure}
+    \item And similarly, a more complex model can be built with $J$ sinusoids at different frequencies $\omega_j$:
+    \[
+    x_n = \sum_{j=1}^J a_j \cos(w_j n) + b_j \sin(\omega n) + e_n
+    \]
+    and the linear model expression is
+    \[
+    \mathbf{G} = \begin{bmatrix}
+    c(\omega_1) & s(\omega_1) & c(\omega_2) & s(\omega_2) & ... c(\omega_J) & s(\omega_J) 
+    \end{bmatrix}
+    \]
+    \[
+    \thetab = \begin{bmatrix}
+    a_1 & b_1 & a_2 & b_2 & ... & a_J & b_J 
+    \end{bmatrix}^T
+    \]
+    \item Thus we can make up a very complicated signal composed of lots of `sinusoids' all added together. If we estimate the parameters $\theta$ from some data then we will be doing a kind of probabilistic `spectrum estimation'.
+\end{itemize}
+\subsubsection{Example 3: AR model}
+    \begin{itemize}
+        \item The AR model is a standard time series model based on an all-pole filtered version of the noise residual:
+        \[
+        x_n = \sum_{i=1}^P a_i x_{n-i} + e_n
+        \]
+        where $e_n$ is the zero mean white noise with variance $\sigd_e$
+        \item The coefficients $\{ a_i; i=1...P \}$ are the filter coefficients of the all-pole filter, the AR parameters, and $P$, the number of coefficients, is the order of the AR process.
+        \item $\{ e_n\}$ can be interpreted as a `prediction error' when predicting the next data point from the previous $P$.
+        \item The transfer function for the filter is:
+        \[
+        H(z) = \frac{1}{1 - \sum_{i=1}^P  a_i z^{-1} }        
+        \]
+        \item And hence the power spectrum for the model is :
+        \[
+        S_x(e^{j\Omega}) = |H(\exp(j\Omega))|^2 \sigd_e = \frac{\sigd_e}{|\sum_{i=1}^P  a_i e^{-j\Omega i}|^2 }
+        \]
+        \item The shape of the power spectrum may readily be sketched by first sketching the magnitude frequency response of $H(z)$ and then squaring
+        \item The model is used extensively in linear prediction of speech, speech synthesis and coding (especially in its adaptation to low bitrate CELP encoders)
+        \item The AR modelling equation of (1) is now rewritten for the block of $N$ data samples as 
+        \[
+        \mathbf{x = G a + e}
+        \]
+        where \textbf{e} is the vector of $N$ error values and the ($N\times P$) matrix G is given by 
+        \[
+        \mathbf{G} = \begin{bmatrix}
+        x_{-1} & x_{-2} & \cdots & x_{-(p-1)} & x_{-P}\\
+        x_0 & x_{-1} & \cdots & x_{-(p-2)} & x_{-{p-1}} \\
+        \vdots & & \ddots & & \vdots \\
+        x_{N-2} & X_{N-3} & \cdots & x_{N-P} & x_{N-P-1} 
+        \end{bmatrix}
+        \]
+        \item The \textbf{G} matrix has to contain data values prior to time $n=0$ in order to calculate all the error terms $e_n$, $n = 0,...,N-1$.
+        \item This is fa special version of the linear model in which the matrix \textbf{G} is not fixed before making the measurements, but is actually made up of observed data points, owing to the feedback all-pole structure of the filter involved.
+        \item This means that we can't directly generate a vector of data from an AR model using the formula $\mathbf{x = G\thetab + e}$, where \textbf{e} is generated from some suitable noise process, such as white Gaussian noise, since \textbf{G} now depends on the data we are trying to generate.
+        \item However, we can generate the data sequentially by applying the all-pole IIR filter with coefficient $a_1,...,a_P$ to a white noise input signal.
+    \end{itemize}
+    \subsection{AR power spectrum}
+    Follow from the last example, here we can find the power spectrum of the AR model:
+    \begin{itemize}
+        \item To sketch the power spectrum from the poles, for the general IIR filter:
+        \[
+        H(e^{j\Omega}) = \frac{\sum_{k=0}^M b_k e^{-jk\Omega}}{1- \sum_{k=1}^N a_k e^{-jk\Omega}}
+        \]
+        and in factorised form (where $c_q$ are the zeros and $d_q$ the poles):
+        \[
+        H(e^{j\Omega}) = b_0 \frac{\prod_{q=1}^M(1-c_q e^{-j\Omega})}{\prod_{q=1}^M(1-d_q e^{-j\Omega})} =  b_0 \frac{e^{-jM\Omega}\prod_{q=1}^N (e^{j\Omega} -c_q)}{e^{-jN\Omega}\prod_{q=1}^N (e^{j\Omega} -d_q)}
+        \]
+        \item For the power spectrum, taking square for the complex modulus:
+        \begin{align*}
+            |H(e^{j\Omega})|^2 &= b_0^2 \frac{\prod_{q=1}^M |e^{j\Omega} -c_q|^2}{\prod_{q=1}^N |e^{j\Omega} -d_q|^2} \\
+            &= b_0^2 \frac{\prod_{q=1}^M \textrm{ Squared distance from } e^{j\Omega} to c_q}{\prod_{q=1}^N \textrm{ Squared distance from } e^{j\Omega} to d_q}
+        \end{align*}
+        \item Hence for the AR model look at 1 over the product of squared distances from the unit circle to each pole, with each pole contributing a peak to the magnitude spectrum (high-Q peaks for poles close to the unit circle, low - Q peaks for poles distant from the unit circle). Note that low-Q peaks are easily hidden by neighbouring high-Q peaks:
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.37\linewidth]{Part2.2/AR_poles.png}
+            \caption{AR model poles with $P=4$, poles at $(r,\theta) =0.99\exp(\pm j0.1\pi)$ and $(r,\theta) =0.97\exp(\pm j0.4\pi)$}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\linewidth]{Part2.2/AR_PSD.png}
+            \caption{AR model PSD and DFT showing the similar shape but noisy version. Also showing the poles}
+        \end{figure}
+        \item Next, Einstein-Wiener-Khinchin Theorem is introduced to prove this similar in shape behaviour.
+    \end{itemize}
+    \subsection{Einstein-Wiener-Khinchin Theorem}
+    \begin{enumerate}
+        \item Take a time-windowed version of the signal $x_n$, having duration $2N + 1$ samples and zero elsewhere;
+        \[
+        x_n^N = w_n^N x_n
+        \]
+        where 
+        \[
+        \win = \left\{ \begin{array}{cc}
+            1, & -N\le n \le N \\
+            0, & \textrm{otherwise}
+        \end{array}\right.
+        \]
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\linewidth]{Part2.2/Window applied to data.png}
+            \caption{Window function applied to a data}
+        \end{figure}
+        \item Look at the DTFT:
+        \[
+        X^N(e^{j\Omega}) = \sumninfinf \win x_n e^{-jn\Omega}
+        \]
+        \begin{itemize}
+            \item $X^N(e^{j\Omega})$ is the DFT of a frame of $2N+1$ data points. The shift of the origin back to  $n=-N$ will not affect the magnitude of the DFT calculated, but will introduce a linear phase shift.
+        \end{itemize}
+        \item Now, its modulus squared can be expanded:
+        \[
+        |X^N(e^{j\Omega})|^2 = \xdft \xdft^*
+        \]
+        and hence we can write the following DTFT pair:
+        \[
+        \DTFT\{\xproc * \xprocrev \} = \xdft \xdft^* = |X^N(e^{j\Omega})|^2
+        \]
+        where $\xprocrev$ is the time-reversed version of $\xproc$. Notice that we are here using the result:
+        \[
+        \DTFT\{\xprocrev \} =\sumninfinf \xprocrev e^{-jn\Omega} = \sum_{n'=-\infty}^\infty x_{n'}^Ne^{jn'\Omega} =\xdft^*
+        \]
+        \item Expand the time-domain convolution:
+        \[
+        \xproc * \xprocrev = \sumninfinf \xproc x_{n-m}^N = \sumninfinf x_n \win x_{n-m} w_{n-m}^N
+        \]
+        \item The DTFT results therefore becomes:
+        \[
+        \DTFT\{\sumninfinf x_n \win x_{n-m} w_{n-m}^N \} = |X^N(e^{j\Omega})|^2
+        \]
+        \item Then divide both side by the window duration ($2N+1$) and take expectations on both sides:
+        \begin{align*}
+            \frac{1}{2N+1}\mexp\left\{\DTFT\{\sumninfinf x_n \win x_{n-m} w_{n-m}^N \}\right\} &= \frac{1}{2N+1}\mexp\left\{|X^N(e^{j\Omega})|^2\right\} \\
+            \DTFT\{\mexp[\frac{1}{2N+1}\sumninfinf x_n \win x_{n-m} w_{n-m}^N] \} &= \mexp[\frac{1}{2N+1}|X^N(e^{j\Omega})|^2]
+        \end{align*}
+        \item And rewrite the term with autocorrelation function:
+        \begin{align*}
+            \mexp[\frac{1}{2N+1}\sumninfinf x_n \win x_{n-m} w_{n-m}^N] &= \frac{1}{2N+1}\sumninfinf \autocox[m]\win w_{n-m}^N  \\
+            &= \autocox[m]\frac{1}{2N+1}\sumninfinf \win w_{n-m}^N \\
+            & = \autocox[m]t[m]
+        \end{align*}
+        where $t[m]$ is the deterministic autocorrelation function of the window-function $w_n$, as shown in the graph below:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Part2.2/window_autoco.png}
+\end{figure}
+
+    \end{enumerate}
+    \begin{itemize}
+        \item To summarise, we have the following DTFT relationship:
+        \[
+        \DTFT\{\autocox[m]t[m] \} = \mexp[\frac{1}{2N+1}|X^N(e^j\Omega)|^2]
+        \]
+        \item And the DTFT of $\autocox$ is the power spectrum, $S_x(\ejomg)$:
+        \[
+        \DTFT\{\autocox[m]t[m] \} = S_x(\ejomg) * T(\ejomg)
+        \]
+        where $T(\ejomg)$ is the DTFT of $t[m]$.
+        \item The plot below shows $T(\ejomg)$ as $N$ increases.
+       
+    \begin{figure}[H]
+        \centering
+        \includegraphics{Part2.2/Window_Spectrum.png}
+        \caption{Spectrum of $t_n$ as $N $ increases}
+    \end{figure}
+    \item As $t[m]$ gets wider and `flatter', so $T(\ejomg)$ tends to a delta function.
+    \item Thus the final limiting expression becomes:
+    \[
+    \lim_{N\rightarrow \infty} \DTFT \{\autocox[m]t[m] \} = \DTFT\{ \autocox[m]\} = S_x(\ejomg) = \lim_{N \rightarrow \infty} \mexp[\frac{1}{2N+1}|X^N(\ejomg)|^2]
+    \]
+    \item In the limit, we have proved that the power spectrum is proportional to the expected value of the \DTFT -squared of the data. 
+    \item The reason that there is a $1/(2N+1)$ factor is to make sure $t[m]$ remains finite-energy as $N$ goes to infinity. 
+    \item To summarise, we have:
+    \[
+    \lim_{N \rightarrow \infty} \mexp[\frac{1}{2N+1}|X^N(\ejomg)|^2] = S_x(\ejomg)
+    \]
+    \item The power spectrum is the expected value of the time normalised DTFT-squared of the signal values. Hence, in our previous AR model example, with finite $N$, the DFT was random but had a similar shape to the underlying power spectrum of the process:
+    \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\linewidth]{Part2.2/AR_PSD.png}
+            \caption{AR model PSD and DFT showing the similar shape but noisy version. Also showing the poles}
+        \end{figure}
+    \end{itemize} 
+\subsection{Simple Estimators}
+We consider the mean and variance for estimators. For example, consider a task to estimate the mean of a random variable 
+\begin{itemize}
+    \item Suppose we have a set of N independent samples of a random variable X which has mean $\mu$ and standard deviation $\sigma$
+    \begin{itemize}
+        \item Intuitively we can estimate the mean by taking the average of the samples:
+        \[
+        \mexp[\hat{\mu}] = \frac{1}{N}\sum_{i=1}^N x_i
+        \]
+        \item Intuitively this would be the best way to estimate the mean, but how do we know if it was a good estimator?
+        \item One way is to say that on average we should expect $\hat{\mu}$ to equal the true mean of $X$, $\mu =\mexp[X]$.
+    \end{itemize}
+    \item This can be expressed in terms of expectations. An estimator is termed unbiased if 
+    \[
+    E[\hat{\mu}] = \mu
+    \]
+    where the expectations is taken with respect to the distribution of all of the random variables $X_i$;
+    \[
+    E[\hat{\mu}] = \int_{x_1}\int_{x_2}\cdots\int_{x_N}\frac{1}{N}\sum_{i=1}^N x_i p(x_1)p(x_2)...p(x_N)d_{x_1}d_{x_2}...d_{x_N}
+    \]
+    and $p(x)$ is the common pdf of all of the random variables $X_i$. The mean of X is $\mu$, i.e.
+    \[
+    \mu = \int_x xp(x)d_x
+    \]
+    \item Such an estimator is described as unbiased, clearly a desirable property. Check that for the proposed estimator:
+    \begin{align*}
+        \mexp[\hat{\mu}] & = \mexp\left[ \frac{1}{N} \sum_{i=1}^N X_i\right] \\
+        & =\frac{1}{N}\sum_{i=1}^N \mexp[X_i] \\
+        & = \mu
+    \end{align*}
+    \end{itemize}
+Variance:
+\begin{itemize}
+
+    \item However this is not the end of the whole story. Just because an estimator is correct on average doesn't stop it being inaccurate for much of the time. One way of measuring this property for an estimator is to measure the \textbf{variance} of the estimator:
+    \[
+    \var(\hat{\mu}) = \mexp[(\pmean - \mexp[\pmean])^2] = \mexp[\pmean^2] - \mexp[\pmean]^2
+    \]
+    \item Now test the variance of the proposed mean estimator:
+    \[
+    \var(\pmean) = \mexp[\pmean^2] - \mexp[\pmean]^2 = \mexp[\pmean^2] - \mu^2
+    \]
+    \item $\mexp[\pmean^2]$ simplifies as: 
+    \begin{align*}
+        \mexp[\pmean^2] &= \mexp\left[\left(\frac{1}{N} \sum_{i=1}^N X_i\right)^2 \right] \\
+        & = \frac{1}{N^2} \sum_{j=1}^N \sum_{i=1}^N \mexp[X_i X_j]
+    \end{align*}
+    Since the variable $X_i$ are independent,
+    \[
+    \mexp[X_i X_j] = \left\{\begin{array}{ll}
+        \mexp[X_i^2]=\mu^2 + \sigd ,  & i=j \\
+        \mu^2 , & i \not = j
+    \end{array}\right.
+    \]
+    \item Therefore,
+    \begin{align*}
+        \mexp[\pmean^2] &= \frac{1}{N^2} (N^2 \mu^2 + N \sigd) \\
+        &= \mu^2 + \sigd / N
+    \end{align*}
+    \item Hence:
+    \[
+    \var(\pmean) = \mexp[\pmean^2] - \mexp[\pmean]^2 = \mexp[\pmean^2] - \mu^2 = \mu^2 + \sigd / N - \mu^2 = \sigd / N
+    \]
+    therefore, as $N \rightarrow \infty$ the variance tends to zero.
+\end{itemize}
+Summary:
+\begin{itemize}
+    \item An estimator such as this, which is unbiased and whose variance tends to zero as $N \rightarrow \infty$ is termed \titc{consistent}. Such an estimator will `definitely' get the correct answer with enough data.
+    \item These definitions of \titc{unbiased} estimators and their variance can in principle be used to measure the performance of any proposed estimation scheme.
+    \item In fact, estimators can be designed for a given problem specifically to lead to no bias and have minimum variance. Such estimators are \titc{minimum variance unbiased (MVU)} estimators.
+\end{itemize}
+\subsection{Linear estimator}
+\subsubsection{General Linear Model}
+General linear model has the form:
+\[
+    \mathbf{x = G \thetab + e}
+\]
+First derive the \titc{Ordinary Least Squares} estimator for the general linear model. Here we will carry out using matrix-vector derivatives.
+\begin{enumerate}
+    
+    \item Try to find the `best fit' model that minimise the following error:
+    \[
+    J = \sum_{n=0}^{N-1}e^2_n = \mathbf{e}^T\mathbf{e}
+    \]
+    \item Expand using $\mathbf{e = x - G\theta}$
+    \[
+    J = \mathbf{e}^T\mathbf{e} = (\mathbf{x - G\thetab})^T(\mathbf{x - G\thetab}) = \mathbf{x}^T\mathbf{x} + \thetab^T\mathbf{G}^T\mathbf{G}\thetab - 2\thetab^T\mathbf{G}^T\mathbf{x}
+    \]
+    \item By defining the vector gradient in the usual way:
+    \[
+    \nabla\phi = \frac{d\phtheta}{d\thetab} = \begin{bmatrix}
+    \dydx{\phtheta}{\theta_0} \\
+    \dydx{\phtheta}{\theta_1} \\
+    \vdots \\
+    \dydx{\phtheta}{\theta_{P-1}} \\
+    \end{bmatrix}
+    \]
+    we obtain:
+    \[
+    \frac{dJ}{d\thetab} = 2\mathbf{G}^T\mathbf{G}\thetab - 2\mathbf{G}^T x
+    \]
+    \item For a stationary point, setting $\frac{dJ}{d\thetab} = 0$
+    \[
+    \mathbf{G}^T\mathbf{G}\thetab = \mathbf{G}^T x
+    \]
+    for invertible $\mathbf{G}^T\mathbf{G}$ ,
+    \[
+    \thetaols = (\mathbf{G}^T\mathbf{G})^{-1}\mathbf{G}^T\mathbf{x}
+    \]
+    i.e. the classical \textit{Ordinary Least Squares} estimate of $\thetab$
+    \begin{itemize}
+        \item Another useful way to think about the expansion of $J$ is by `completing the square':
+        \[
+        \mathbf{x}^T\mathbf{x} + \thetab^T\mathbf{G}^T\mathbf{G}\thetab - 2\thetab^T\mathbf{G}^T\mathbf{x} = (\thetab - \thetaols)^T \mathbf{G}^T\mathbf{G} (\thetab - \thetaols) - {\thetaols}^T \mathbf{G}^T\mathbf{x} + \mathbf{x}^T\mathbf{x}
+        \]
+        \item This serves to show that the OLS estimator is globally optimal, and will also come in handy shortly under likelihood and Bayesian inference schemes.
+        \item We will come back to this under Maximum Likelihood estimation, but for now consider the properties of the OLS estimator for the General Linear Model.
+    \end{itemize}
+\end{enumerate}
+\subsubsection{Properties of the Linear Estimator}
+What are the properties and could we ever do better than OLS?
+\begin{itemize}
+    \item First consider the bias:
+    \[
+    \mexp[\thetaols] = \mexp[(\mathbf{G}^T\mathbf{G})^{-1}\mathbf{G}^T\mathbf{x}] = (\mathbf{G}^T\mathbf{G})^{-1}\mathbf{G}^T\mexp[\mathbf{x}]
+    \]
+    \item For the linear model: $\mathbf{x = G \thetab + e}$:
+    \[
+    \mexp[\mathbf{x}] = \mathbf{G \thetab + 0} = \mathbf{G \thetab}
+    \]
+    since the noise process $\proc{e}$ has zero mean
+    \item Substituting back into the first expectation gives
+    \[
+    \mexp[\thetaols] = (\mathbf{G}^T\mathbf{G})^{-1}\mathbf{G}^T \mathbf{G \thetab} = (\mathbf{G}^T\mathbf{G})^{-1}(\mathbf{G}^T \mathbf{G) \thetab} = \thetab
+    \]
+    hence proving that OLS is unbiased which sounds like good news
+\end{itemize}
+\subsubsection{Covariance of OLS}
+Compare the variance to other linear estimators:
+\begin{itemize}
+    \item Define the OLS matrix term as 
+    \[
+    \mathbf{C = } (\mathbf{G}^T\mathbf{G})^{-1}\mathbf{G}^T
+    \]
+    \item Then examine the variance of any other \textit{unbiased} estimator, which we can write:
+    \[
+    \hat{\thetab}  = \mathbf{Dx}
+    \]
+    where 
+    \[
+    \mathbf{D = C + \Delta}
+    \]
+    AND $\mathbf{\Delta}$ is some matrix perturbation away from the OLS solution.
+    \item For $\mathbf{Dx}$ to be unbiased we require that:
+    \[
+    \mexp[\mathbf{Dx}] = \thetab,
+    \]
+    i.e. 
+    \[
+    \mathbf{\mexp[(C+\Delta)x] = (C + \Delta)\mexp[x] = (C + \Delta)G \thetab } = \thetab + \Delta G \thetab = \thetab,
+    \]
+    therefore we require
+    \[
+    \mathbf{\Delta G = 0}
+    \]
+    \item Now, the covariance matrix of the estimator of $\theta$is 
+    \[
+    \cov(\prethe) = \mexp[(\prethe - \mexp[\prethe])  (\prethe - \mexp[\prethe])^T]
+    \]
+    This is the matrix-vector version of the scalar variance of a random variable. Note in particular that the $(i,i)$th element of the covariance matrix is the variance of $\hat{\theta_{i-1}}$
+    \item But since we are dealing only with unbiased estimators we have $\mexp[\prethe] =\thetab$ and the calculation reduces to the covariance matrix of the estimation error:
+    \[
+    \cov(\thetab) = \mexp[(\prethe - \thetab)(\prethe - \thetab)^T] = \mexp[\prethe\prethe^T] - \thetab\thetab^T
+    \]
+    \item Now, for the linear estimator $\prethe = \mathbf{Dx}$, we have
+    \[
+    \mexp[\prethe\prethe^T] = \mexp[\mathbf{Dxx^TD^T}] = \mathbf{D \mexp[xx^T]D^T}
+    \]
+    \item And 
+    \[
+    \mathbf{xx^T} = \mathbf{(G\thetab + e)(G\thetab + e)^T} = \mathbf{G\thetab \thetab^T G^T  + ee^T + e\thetab^T G^T + G\thetab e^T}
+    \]
+    hence
+    \[
+    \mexp[\mathbf{xx^T}] = \mathbf{(G\thetab + e)(G\thetab + e)^T} + \sigd_e \mathbf{I}
+    \]
+    since $\proc{e}$ is zero mean white noise with variance $\sigd_e$.s
+    \item Now the expectation is obtained as 
+    \begin{align*}
+        \mexp[\prethe\prethe^T] =& \mathbf{D \mexp[xx^T]D^T} \\
+        & = \mathbf{D(G\thetab\thetab^T G^T + \sigd_e I)D^T }\\
+        & = \thetab\thetab^T + \sigd_e \mathbf{DD}^T
+    \end{align*}
+    where the last line is obtained by:
+    \[
+    \mathbf{DG = (C + \Delta)G = CG + \Delta G = CG = I}
+    \]
+    \item Then we have,
+    \begin{align*}
+        \cov(\prethe) & = \mexp[\prethe\prethe^T] - \thetab\thetab^T = \sigd_e \mathbf{DD}^T \\
+        & = \sigd_e \mathbf{(C+\Delta)(C+\Delta)}^T \\
+        & = \sigd_e \mathbf{(CC^T + \Delta\Delta^T + \Delta C^T + C\Delta^T)} \\
+        & = \sigd_e \mathbf{(CC^T + \Delta\Delta^T)} \\
+        & = \sigd_e \mathbf{((G^T G)^{-1} + \Delta\Delta^T)} \\
+    \end{align*}
+    \item Clearly with $\Delta = 0$ we have the OLS estimator covariance , so 
+    \[
+    \cov(\prethe) = \cov(\thetaols) + \sigd_e \Delta \Delta^T
+    \]
+    ``OLS estimator has the lowest convariance'' and the rest part is the positive valued perturbation term
+    
+\end{itemize}
+Summary:
+\begin{itemize}
+    \item Now the variance of each parameter estimate $\hat{\theta_{i-1}}$ is the $i$th diagonal element of $\cov(\prethe)$. And the diagonal elements of $\Delta\Delta^T$ are also $\ge 0 $ by its construction. Hence we have that 
+    \[
+    \var(\hat{\theta_i}) \ge \var(\theta_{i}^{\OLS})
+    \]
+    with equality when $\Delta = 0$
+    \item We have thus proved that the OLs estimator is the minimum variance unbiased estimator of $\thetab$. Such an estimator is termed as \empha{Best Linear Unbiased Estimator (BLUE)}
+    \item Also it can showed that the OLS is the uniqure BLUE for the Generale Linear Model.
+    \item If in addition we have prior probability information $p(\thetab)$ about $\thetab$ then a Bayesian estimator can give better mean-squared error performance at the cost of some small bias in the estimates 
+\end{itemize}
+\subsection{Likelihood Estimation} 
+Defining $e_n$ error term:
+\begin{itemize}
+    \item The error sequence $\mathbf{e}$ will be assumed i.i.d. ,
+    that is 
+    \[
+    p(\mathbf{e}) = p_e(e_0)p_e(e_1)...p_e(e_{N-1})
+    \]
+    where $p_e$ denotes some identical noise distribution. All of the $p$ terms here are pdf. Note that here not necessarily zero mean so far.
+    \item $\{e_n \}$ can be viewed as a modelling error, `innovation' or observation noise, depending upon the type of model.
+    \item When $p_e()$ is the zero-mean normal distribution we have the Linear Gaussian model, sometimes known as the \textit{Gauss-Markov} model.
+\end{itemize}
+Multivariate Gaussian density function:
+\begin{itemize}
+    \item For a length $N$ random column vector $\mathbf{X}$:
+    \[
+    f_\mathbf{{X}}\mathbf{(x)} = \frac{1}{\sqrt[N]{2\pi}\det{\mathbf{(C_x)}}^\frac{1}{2}}\exp\left(-\frac{1}{2}(\mathbf{x-\mub})^T\mathbf{C_X}^{-1}(\mathbf{x-\mub})\right)
+    \]
+    \item Here $\mub = \mexp[\mathbf{X}]$ is the mean vector
+    \item And $\mathbf{C_X} = \mexp[(\mathbf{x-\mub})(\mathbf{x-\mub})^T]$ is the \textit{Covariance Matrix}
+    \item Elementwise we have that $[C_X]{ij} = c_{X_i X_j}$ the covariance between elements $X_{i-1}$ and $X_{j-1}$.
+\end{itemize}
+\subsubsection{Maximum Likelihood (ML) Estimator}
+\begin{itemize}
+    \item The observed data $\mathbf{x}$ is considered random and we often obtain the pdf for $\mathbf{x}$ when the value of $\thetab$ is known. This pdf is termed the \textit{likelihood} $L(\xb;\thetab)$:
+    \[
+    L(\xb;\thetab) = p(\xb|\thetab)
+    \]
+    \item The Maximum Likelihood (ML) estimate for $\thetab$ is the value of $\thetab$ that maximises the likelihood for given observations $\xb$:
+    \[
+    \thetab^\ml = \textrm{arg}\max_{\theta}\{ p(\xb|\thetab)\}
+    \]
+    \item The ML solution corresponds to the parameter vector which would have generated the observed data $\mathbf{x}$ with highest probability.
+    \item The maximisation task required for ML estimation can be achieved using standard differential calculus for well-behaved and differentiable likelihood functions 
+    \item It is convenient analytically to maximises the log-likelihood function 
+    \[l(\xb;\thetab) =\log( L(\xb;\thetab))\]
+    Since log is a monotonically increasing function, the two solutions are identical.
+    \item The likelihood function is arrived at through knowledge of the stochastic model for the data. 
+    \item For example, for Gauss-Markov model we have:
+    \[
+    \mathbf{x = G \thetab + e}
+    \]
+    where the noise terms are i.i.d. as zero-mean Gaussian:
+    \[
+    p(\mathbf{e}) = \prod_{n=0}^{N-1}\gau(e_n | 0,\sigd_e) = \prod_{n=0}^{N-1}\frac{1}{\sqrt{2\pi \sigd_e}}e^{-\frac{1}{2\sigd_e}e^2_{n}}
+    \]    
+    \item Which can be rewritten in the vector form:
+    \[
+    \prod_{n=0}^{N-1}\frac{1}{\sqrt{2\pi \sigd_e}}e^{-\frac{1}{2\sigd_e}e^2_{n}} = \frac{1}{\sqrt{2\pi \sigd_e}}e^{-\frac{1}{2\sigd_e}\sum_{n=0}^{N-1}e^2_{n}} = \frac{1}{\sqrt{2\pi \sigd_e}}e^{-\frac{1}{2\sigd_e}\mathbf{e^T e}}
+    \]
+    which is the multivariate Gaussian distribution with mean zero and covariance matrix $\sigd_e \mathbf{I}$
+    \[
+    p(\mathbf{e}) = \gau (\mathbf{e|0,\sigd_e I})
+    \]
+    \item To get the likelihood $p(\mathbf{x} | \thetab)$, notice that the linear model equation $\mathbf{x = G\thetab + e}$ is a vector change of variables,
+    \[
+    \mathbf{e} \rightarrow \mathbf{x}
+    \]
+    \item We are conditioning on $\thetab$ and therefore we can treat $\mathbf{G\thetab}$ as a constant term in the change of variables.
+    \item Hence the change of variables is a very simple one with unity Jacobian and we get
+    \[
+    p(\mathbf{x}|\thetab) = p_e(\mathbf{e})|_{\mathbf{e=x-G\thetab}}
+    \]
+    \item Thus the likelihood is:
+    \[
+    L(\mathbf{x;\thetab}) = p(\mathbf{x | \thetab}) = p_{\mathbf{e}}(\mathbf{x-G\thetab})
+    \]
+    \item Expanding this out we get:
+    \[
+    p_e(\mathbf{x-G\thetab}) = \frac{1}{(2\pi \sigd_e)^{N/2}}\exp\left(-\frac{1}{2\sigd_e}(\mathbf{x-G\thetab})^T(\mathbf{x-G\thetab}) \right)
+    \]
+    and taking logarithms:
+    \begin{align*}
+        \log L(\mathbf{x};\thetab) =& -(N/2)\log(2\pi \sigd_e) - \frac{1}{2\sigd_e}(\mathbf{x-G\thetab})^T(\mathbf{x-G\thetab}) \\
+        =& -(N/2)\log(2\pi \sigd_e) - \frac{1}{2\sigd_e}\sum_{n=0}^{N-1}(x_n - \mathbf{g}_n^T \thetab)^2  \\
+        =& \frac{1}{2\sigd_e}\sum_{n=0}^{N-1}(x_n - \mathbf{g}_n^T \thetab)^2 + \textrm{constant}
+    \end{align*}
+    \item Thus maximisation of this function w.r.t. $\thetab$ is equivalent to minimising the sum-squared of the error sequence. This is exactly the criterion which is applied in the familiar ordinary least squares (OLS) estimation method
+    \item Hence we get that ML estimator is:
+    \[
+    \thetab^{\ml} = \thetaols = \mathbf{(G^TG)^{-1}G^Tx}
+    \]
+\end{itemize}
+Summary:
+\begin{itemize}
+    \item In general, then, when the error process $\proc{e}$ is zero-mean independent and Gaussian with fixed variance, the OLS and ML solutions are identical.
+    \item We would get a different solution if the noise were non-white/Gaussian. 
+    \item Moreover, the Bayesian inference method will give a new solution to the estimation problem even in white Gaussian noise case.
+\end{itemize}
+\subsubsection{Example: AR model for speech}
+\begin{itemize}
+    \item We can apply the ML method directly to the AR model.
+    \item We know for the AR model the form of the general linear model is:
+    \[
+    \mathbf{x = Ga +e}
+    \]
+    where \textbf{e} is the vector of $N$ error values and the ($N\times P$) matrix G is given by 
+        \[
+        \mathbf{G} = \begin{bmatrix}
+        x_{-1} & x_{-2} & \cdots & x_{-(p-1)} & x_{-P}\\
+        x_0 & x_{-1} & \cdots & x_{-(p-2)} & x_{-{p-1}} \\
+        \vdots & & \ddots & & \vdots \\
+        x_{N-2} & X_{N-3} & \cdots & x_{N-P} & x_{N-P-1} 
+        \end{bmatrix}
+        \]
+        \item Then, measure some data $\mathbf{x}$d construct $\Gb$ as above from teh data vector and estimate the parameters by ML:
+        \[
+        \mathbf{a}^\ml = (\Gb^T\Gb)^{-1}\Gb^T \xb
+        \]
+        \item This method is often referred to as the `covariance' method. 
+\end{itemize}
+\subsubsection{Estimating the variance}
+\begin{itemize}
+    \item The noise variance can also be estimated in the Linear Gaussian Model by ML
+    \item To see this, look at the log-likelihood function at the optimal parameter estimate $\thetab^\ml$ aldo considered as a function of $\sigd_e$:
+    \begin{align*}
+        \log L(\xb;\thetab^\ml, \sigd_e) &= - (N/2) \log(2\pi\sigd_e) -\frac{1}{2\sigd_e}(\mathbf{x-G\thetab^\ml})^T(\mathbf{x-G\thetab^\ml})\\
+        & = - (N/2) \log(2\pi\sigd_e) - \frac{1}{2\sigd_e}J^\ml
+    \end{align*}
+    where $J^\ml$ is the minimum squared error term corresponding to the ML optimisation
+    \item Differentiate wrt $\sigd_e$ and set to zero to get:
+    \[
+    \dydx{\log L(\xb;\thetab^\ml, \sigd_e)}{\sigd_e} = \frac{(N/2)}{\sigd_e} + \frac{J^\ml}{2(\sigd_e)^2} = 0
+    \]
+    and hence 
+    \[
+    {\sigd_e}^\ml = J^\ml / N
+    \]
+    \item Then apply it to some real speech.
+    \item Estimate from recorded speech vector, an AR model $\mathbf{a}$ plus variance $\sigd_e$ for various orders $P$
+    \item Reasynthesize some new speech by generating random white Gaussian noise with the estimated variance:
+    \[
+    e_n^{\textrm{synth}} \sim \gau (0,{\sigd_e}^\ml)
+    \]
+    \item Then running the noise through the estimated AR (all-pole) filter:
+    \[
+    x_n^{\textrm{synth}} = \sum_{i=1}^P a_i^{\ml} x_{n-i}^{\textrm{synth}} + e_n^{\textrm{synth}}
+    \]
+\end{itemize}
+\subsection{Bayesian Methods}
+\subsubsection{Definition}
+\begin{itemize}
+    \item The ML methods treat parameters as unknown constants. If we are prepared to treat parameters as random variables/vectors it is possible to assign prior pdf to the parameters.
+    \item These pdf should ideally express some prior knowledge about the relative probability of different parameter values before the data are observed
+    \item Of course if nothing is known \textit{a priori} about the paramters then the prior distributions should in some sense express no initial preference for one set of parameters over any other.
+    \item In many cases a prior density is chosen to express some highly qualitative prior knowledge about the parameters.
+    \begin{itemize}
+        \item In such cases the prior chosen will be more a reflection of a degree of belief concerning parameter values than any true modelling of an underlying random process which might have generated those parameters.
+    \end{itemize}
+    \item The willingness to assign priors which reflect subjective information is a powerful feature and also one of the most fundamental differences between Bayesian and classical (likelihood-based) inferential procedures.
+\end{itemize}
+\subsubsection{Properties and Process}
+\begin{itemize}
+    \item The precise form of probability distributions assigned \textit{a priori} to the parameters requires careful consideration since misleading results can be obtained from erroneous priors, but in principle at least we can apply the Bayesian approach to any problem where statistical uncertainty is present.
+    \item Bayes' Theorem is now stated as applied to estimation of random parameters $\thetab$ from a random vector $\xb$ of observations, known as the posterior or \textit{a posteriori} probability for the paramter:
+    \[
+    p(\thetab | \xb) = \frac{\overbrace{p(\xb | \thetab)}^{\textrm{Likelihood}}  \overbrace{p(\thetab)}^{\textrm{prior}}}{\underbrace{p(\xb)}_{\textrm{Marginal Likelihood / Evidence}}}
+    \]
+    Note that all of the distributions in this expression are implicitly conditioned upon all prior modelling assumptions, as was the likelihood function.
+    \begin{itemize}
+        \item The distribution $p(\xb | \thetab)$ is the likelihood as used for ML estimation,
+        \item while $p(\thetab)$ is the prior or \textit{a priori} distribution for the parameters. This term is one of the critical differences between Bayesian and classical techniques. It expresses in an objective fashion the probability of various model parameters values before the data $\xb$ has been observed.             
+    \end{itemize}
+      \item The prior density may be an expression of highly subjective information about parameter values. This transformation from the subjective domain to an objective form for the prior can be of great significance and should be considered carefully when setting up an inference problem.
+      \item The term $p(\thetab | \xb)$ the posterior or \textit{a posteriori} distribution, expresses the probability of $\thetab$ given the observed data $\xb$. This is now a true measure of how `probable' a particular value of $\thetab$ is, given the observations $\xb$
+      \item $p(\thetab | \xb)$ is in a more intuitive form for parameter estimation than the likelihood, which expresses how probable the observations are given the parameters.
+      \item The generation of the posterior distribution form the prior distribution when data $\xb$ is observed can be thought of as a refinement to any previous (`prior') knowledge about the parameters.
+      \item Before $\xb$ is observed $p(\thetab)$ expresses any information previously obtained concerning $\thetab$
+      \item Any new information concerning the parameters contained in $\xb$ is then incorporated to give the posterior distribution.
+      \item Clearly if we start off with little  or no information about $\thetab$ then the posterior distribution is likely to obtain information almost solely from $\xb$.
+      \item Conversely, if $p(\thetab)$ expresses a significant amount of information about $\thetab$ then $\xb$ will contribute relatively less new information to the posterior distribution.
+      \item The denominator $p(\xb)$, referred to as the marginal likelihood, or the `evidence' in machine learning, is a fundamentally useful quantity in model selection problems, and is constant for any given observation $\xb$; thus it may be ignored if we are only interested in the relative posterior probabilities of different parameters.
+      \item As a result of this, Bayes' theorem is often stated in the form:
+      \[
+      p(\thetab | \xb) = P(\xb | \thetab) p(\thetab)
+      \]
+      \item $p(\xb)$ may be calculated in principle by integration:
+      \[
+      p(\xb) = \int p(\xb | \thetab) p(\thetab) d\thetab
+      \]
+      and this effectively serves as the normalising constant for the posterior density. For discrete replace integration with summation.
+      \item We are here implicitly conditioning in this framework on many pieces of additional prior information beyond just the prior parameters of the model $\thetab$. For example, we are assuming a precise form for the data generation process in the model
+      \item if the linear Gaussian model is assumed, then the whole data generation process must follow the probability law of that model, otherwise we cannot guarantee the quality of our answers; the same argument applies to ML estimation, although in the Bayesian setting the distributional form of the Bayesian prior must be assumed in addition.
+      
+\end{itemize}
+\subsubsection{Posterior inference}
+\begin{itemize}
+    \item The posterior distribution gives the probability for any chosen $\thetab$ given observed data  $\xb$, and as such optimally combines our prior information about $\thetab$ and any additional information gained about $\thetab$ from observing $\xb$.
+    \item We may in principle manipulate the posterior density to infer any required statistic of $\thetab$ conditional upon $\thetab$
+    \item This is a significant advantage over ML and least squares methods which strictly give us only a single estimate of $\thetab$, known as a `point estimate'.
+    \item However, by producing a posterior p.d.f. with values defined for all $\thetab$ the Bayesian approach gives a fully interpretable probability distribution.
+    \item In principle this is as much as one could ever need to know about the inference problem.
+    \item In signal processing problems, however, we usually require a single point estimate for $\thetab$, and a principled way of choosing this is via an expected \textit{cost function} $C(\prethe , \thetab)$ which express objectively a measure of the cost associated with a particular parameter estimate $\prethe$ when the true parameter is $\thetab$
+\end{itemize}
+MAP 
+\begin{itemize}
+    \item  The simplest and most intuitive way to perform Bayesian estimation is the maximum \textit{a posteriori} (MAP) estimate, the value of $\prethe$ which maximises the posterior distribution: 
+    \[
+    \thetamap = \arg\max_{\thetab} \{ p(\thetab | \xb)\}
+    \]
+    \item In other words, just like ML for the likelihood, we solve to find the parameters $\thetab$ which maximise the posterior probability.
+    \item Work through the MAP estimation scheme under the Linear Gaussian model. Suppose that the prior on parameter vector $\thetab$ is the multivariate Gaussian:
+    \[
+    p(\thetab) = \gau (\mbt, \cbt) = \frac{1}{(2\pi)^{P/2}|\cbt|^{1/2}}\exp\left( -\frac{1}{2}(\thetab - \mbt)^T \cbt^{-1} (\thetab - \mbt)\right)
+    \]
+    where $\mbt$ is the prior parameter mean vector, $\cbt$ is the parameter covariance matrix and $P$ is the number of parameters in $\thetab$
+    \item The likelihood $p(\xb | \thetab)$ takes the same form as before for the Ml estimator, so the posterior distribution is as follows:
+    \begin{align*}
+    p(\thetab | \xb) \propto & p(\thetab) p(\xb | \thetab)     \\
+    \propto & \frac{1}{(2\pi)^{P/2}|\cbt|^{1/2}}\ exp \left( -\frac{1}{2}(\thetab - \mbt)^T \cbt^{-1} (\thetab - \mbt) \right)    \frac{1}{(2\pi\sigd_e)^{N/2}} \exp\left( -\frac{1}{2\sigd_e}(\xb - \Gb\thetab)^T (\xb - \Gb\thetab)\right)
+    \end{align*}
+    \item Then $-2 \times \log$ probability is given by:
+    \[
+    -2\log (p(\thetab | \xb)) = (\thetab - \mbt)^T \cbt^{-1} (\thetab - \mbt) + \frac{1}{\sigd_e}(\xb - \Gb \thetab)^T (\xb - \Gb \thetab) + \textrm{constant}
+    \]
+    where the constant term does not depend on $\thetab$
+    \item Hence the MAP estimate $\thetamap$ is obtained by differentiation and setting to 0:
+    \[
+    \thetamap = (\Gb^T\Gb + \sigd_e\cb^{-1})(\Gb^T\xb + \sigd_e\cb^{-1}\mbt)
+    \]
+    Compare to the ML estimator:
+    \[
+    \thetab^{\ml} = \thetaols = (\Gb^T \Gb)^{-1} \Gb^T \xb
+    \]
+    \begin{figure}[H]
+        \centering
+        \includegraphics{Bayes/MAP_1.png}
+        \caption{Prior, likelihood and posterior for 1-D Gaussians}
+    \end{figure}
+    \item In the expression we can see the `regularising' effect of the prior density on the ML estimate. As the prior becomes more `diffuse', i.e. the diagonal elements of $\cbt$ increases both in magnitude and relative to the off-diagonal elements, we imposes `less' prior information on the estimate. In the limit the prior tends to a uniform (flat) prior with all $\thetab$ equally probable. In this limit $\cbt^{-1} = 0$ and the estimate is identical to the ML estimate. This useful relationship demonstrates that the ML estimate ma be interpreted as the MAP estimate with uniform prior assigned to $\thetab$
+    \item The MAP estimate will also tend towards the ML estimate when the likelihood is strongly `peaked' around its maximum compared with the prior. Once again the prior will then have little influence on the shape of posterior density. It is in fact well known that as the sample size $N$ tends to infinity the Bayes solution tends to the ML solution/
+    \item This of course says nothing about small sample parameter estimates where the effect of the prior may be very significant.
+    \item The choice of a multivariate Gaussian prior may well be motivated by physical considerations about the problem, or it may be motivated by subjective prior knowledge of about the value of $\thetab$ before the data $\xb$ are seen in terms of a rough value $\mbt$ and a confidence in that value through the covariance matrix $\cbt$. In fact the choice of Gaussian also has the very special property that it makes the Bayesian calculations straightforward and available in closed form. Such a prior is known as a `conjugate' prior.
+    \item The required distribution can be obtained by rearranging the log probability function:
+    \begin{align}
+        \frac{1}{\sigd_e}&(\xb - \Gb \thetab)^T (\xb - \Gb \thetab) + (\thetab - \mbt)^T \cbt^{-1} (\thetab - \mbt) \\
+        &= \frac{1}{\sigd_e}\left( (\thetab - \thetamap)^T(\thetab - \thetamap) + \xb^T\xb + \sigd_e \mbt^T\cbt^{-1}\mbt - \Thetab^T\thetamap \right)
+    \end{align}
+     with terms defined as 
+     \begin{align*}
+         \thetamap & = \phi^{-1}\Thetab \\
+         \boldsymbol{\phi} &= \Gb^T\Gb + \sigd_e \cbt^{-1}\\
+         \Thetab &= \Gb^T \xb + \sigd_e \cbt^{-1}\mbt
+     \end{align*}
+     \item The first term in Eq.(9) is in exactly the correct form for the exponent of a multivariate Gaussian, with mean vector and covariance matrix as follows,
+     \[
+     \mbt^{\textrm{post}} = \thetamap \qquad \cbt^{\textrm{post}} = \sigd_e \boldsymbol{\phi^{-1}}
+     \]
+     \item Since then the remaining terms in Eq.(9) do not depend on $\thetab$, and we know that the multivariate density function must be proper (i.e. integrate to 1), we can conclude that the posterior distribution is itself a multivariate Gaussian,
+     \[
+     p(\thetab | \xb) = \gau (\thetamap , \sigd_e \boldsymbol{\phi^{-1}}).
+     \]
+     This formula would allow us to reinterpret the Bayesian estimator for the linear model in terms of its mean-squared error.
+\end{itemize}
+\subsubsection{Example: Gaussian Model with one observation}
+\begin{itemize}
+    \item When $P =1$ and $ N =1$, take $\Gb = 1$ so that:
+    \[
+    x = \theta + e
+    \]
+    and prior : 
+    \[
+    p(\theta) = \gau(\mu_\theta , \sigd_\theta)
+    \]
+    \item The likelihood is just:
+    \[
+    p(x|\theta) = \gau(x | \theta,\sigd_e) \propto e^{-\frac{1}{2\sigd_e}(x-\theta)^2}
+    \]
+    Note that this is Gaussian-shaped as a function of either $x$ or $\theta$. 
+    \item Using the above formulae, or re-deriving:
+    \[
+    \theta^\map = \frac{x + \sigd_e \mu_\theta \sigd_\theta}{1 + \sigd_e/\sigd_\theta} = \frac{\sigd_\theta x + \sigd_e \mu_\theta}{\sigd_\theta + \sigd_e} = \alpha x + (1-\alpha)\mu_\theta
+    \]
+    with $\alpha = \frac{\sigd_\theta}{\sigd_\theta + \sigd_e}$, and 
+    \[
+    \var(\theta|x) = \frac{\sigd_e}{1 + \sigd_e/\sigd_\theta} = \frac{\sigd_e \sigd_\theta}{\sigd_\theta + \sigd_e}
+    \]
+    So,
+    \[
+    p(\theta | x) = \gau \left( \frac{\sigd_\theta x + \sigd_e \mu_\theta}{\sigd_\theta + \sigd_e}, \frac{\sigd_e \sigd_\theta}{\sigd_\theta + \sigd_e} \right)
+    \]
+    \item See plots below for different prior-likelihood trade-offs:
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.8\linewidth]{Bayes/trade-off.png}
+    \end{figure}
+\end{itemize}
+\subsubsection{MMSE Estimation}
+\begin{itemize}
+    \item Apart from intuition, we have not justified why the MAP estimator is a good thing to do.
+    \item In fact, for the linear model we know that that OLS estimator has the best performance of any unbiased estimation scheme. (BLUE)
+    \item Could it be, however, that the Bayesian estimator is actually introducing some bias in order to get better performance in some other sense?
+    \item Now consider more carefully the notion of an expected cost function . $C(\prethe, \thetab)$ expresses the cost of estimating the parameter as $\prethe$ when the true value is $\thetab$.
+    \item A suitable cost function is non-negative and usually satisfies $C(\prethe, \thetab) = 0$.
+    \item We can write the expected cost over all of the unknown paramters, conditional upon the observed data $\xb$:
+    \[
+    \mexp[C(\prethe, \thetab)] = \int_{\thetab} C(\prethe, \thetab) p(\thetab | \xb) d\thetab
+    \]
+    \item The form of cost function will depend on the requirements of a particular problem.
+    \item A cost of 0 indicates that the estimate is perfect for our requirements, while positive costs indicate poorer estimates.
+    \item As usual, because of the random properties of the model, we can only estimate the expected cost of a particular estimator.
+    \item A classic estimation technique related to the Wiener filtering objective function is the Minimum mean-squared error (MMSE) estimation method. Given some data $\xb$ we attempt tot find an estimator $\prethe(\xb)$ which has minimum squared error, on average:
+    \[
+    \min_{\prethe} \mexp[(\prethe - \thetab)^2]
+    \]
+    Any small bias introduced can be tolerated provided the MSE is low
+    \item To derive the MMSE estimator we need the conditional distribution of $\theta$ given $\xb$, $p(\theta | \xb)$, which will be obtained using Bayes' theorem:
+    \[
+    p(\thetab | \xb) = \frac{p(\xb | \thetab)p(\thetab)}{p(\xb)}
+    \]
+    \item The MSE can now be expressed as:
+    \[
+    J = \mexp[(\prethe - \thetab)^2] = \int_{\thetab}(\prethe - \thetab)^2p(\thetab | \xb)d\thetab
+    \]
+    \item Differentiate w.r.t $\thetab$ gives:
+    \begin{align*}
+        \frac{dJ}{d\thetab} &= \frac{d}{d\thetab}\int_{\thetab}(\prethe - \thetab)^2p(\thetab | \xb)d\thetab \\
+        &= \int_{\thetab}\frac{d}{d\thetab}(\prethe - \thetab)^2p(\thetab | \xb)d\thetab \\
+        &= \int_{\thetab} 2(\prethe - \thetab) p(\thetab | \xb)d\thetab \\
+    \end{align*}
+    and setting to zero:
+    \[
+    \int_{\thetab} 2(\prethe - \thetab) p(\thetab | \xb)d\thetab = 0
+    \]
+    and
+    \begin{align*}
+        \prethe \int_{\thetab}  p(\thetab | \xb)d\thetab &=  \int_{\thetab}  \thetab p(\thetab | \xb)d\thetab \\
+        \prethe \times 1 &= \mexp[\thetab | \xb] \\
+    \end{align*}
+\begin{itemize}
+    \item The LHS is simplified since we have:
+    \[
+    \int_{\thetab}  p(\thetab | \xb)d\thetab = 1
+    \]
+\end{itemize}
+\item Hence we have the result for the MMSE estimator as:
+\[
+\prethe^{\textrm{MMSE}} = \mexp[\thetab |\xb] = \int_{\thetab} \thetab p(\thetab | \xb) d\thetab
+\]
+\item The posterior distribution was obtained as:
+\[
+p(\thetab | \xb) = \gau(\thetamap , \sigd_e \boldsymbol{\Phi}^{-1})
+\]
+The mean value of this distribution is $\thetamap$
+\item Hence the MMSE estimator for the Linear Gaussian model is, 
+\[
+\thetab^{\textrm{MMSE}} = \thetamap
+\]
+In other cases, the estimators do not necessarily coincide.
+\end{itemize}
+\section{Summary of Estimators}
+We have examined three important estimation methods, each of increasing sophistication. It was seen that the Ordinary Least Squares
+(OLS) estimator was a special case of the Maximum Likelihood (ML)
+estimator when the noise was Gaussian with zero-mean and fixed
+variance. In turn the ML estimator was a special case of the Maximum a posteriori (MAP) estimator when the prior distribution on $\theta$
+was uniform. However, ML requires specific knowledge of the likelihood function and MAP estimation requires in addition knowledge
+of a prior density $p(\theta)$. The choice of estimator will thus depend on
+the degree of knowledge available and the performance required.
+
+The performance of the threee estimators:
+\begin{itemize}
+    \item Least Squares
+    \begin{itemize}
+        \item Requires no knowledge of probability distributions 
+        \item Cannot incorporate prior knowledge about parameter probability distributions
+        \item Usually the simplest scheme to implement
+        \item Guarantee of performance as BLUE estimator 
+        \item No guarantees of performance compared to nonlinear estimators
+    \end{itemize}
+    \item Maximum Likelihood (ML)
+    \begin{itemize}
+    \item Requires knowledge of noise probability distribution
+    \item Cannot incorporate prior knowledge about parameter probability distributions 
+    \item Can be more complicated to implement than LS in the non-Gaussian case
+    \item Performance guaranteed to be optimal when the amount of data is large.
+    \end{itemize}
+    \item Bayesian (MAP and MMSE)
+    \begin{itemize}
+        \item Requires knowledge of noise (model) probability distributions
+        \item Requires knowledge of parameter prior probability distribution (might require subjective input)
+        \item Incorporates prior knowledge about parameter probability distribution
+        \item Can be more complicated to implement than LS or ML, depending on form of likelihood and prior
+        \item Performance guaranteed to be optimal for any amount of data (provided prior distribution is correct)
+    \end{itemize}
+\end{itemize}
+\end{document}
